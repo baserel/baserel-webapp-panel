@@ -1,0 +1,70 @@
+extends layout
+
+block view-title
+    h3.panel-title Documentation | Introduction
+
+block content
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Basic concepts about how a Baserel Instance works.
+    .row(style="padding: 0 20px; margin-bottom: 30px;")
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Dashboard
+                    p(style="color: #343434; padding: 0 50px").
+                        The Dashboard is the home page which shows the lastest recently visited projects related to the user session. This is usefull as a shortcut for the projects that the user use to manage in the Instance.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Project
+                    p(style="color: #343434; padding: 0 50px").
+                        A Project is a collection of tables where you can define security policies which will affect all its tables.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Table
+                    p(style="color: #343434; padding: 0 50px").
+                        A Table is a sort of columns where you can storage and manage records. The tables can be managed through the API endpoints: GET, used to pull data from the table; PUT, Used to add and edit data to the table; DEL, used to delete data from the table.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Record
+                    p(style="color: #343434; padding: 0 50px").
+                        A Record is a set of columns and values which resides in a table. Records have an special column named "_id" (labeled as "ID") which increments every time a record is inserted and identificates the record in the table
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title API Endpoints
+                    p(style="color: #343434; padding: 0 50px").
+                        The API Endpoints can be used to manage the data that resides in a table. They are affected by the security policies applied to he project and the users. If the project's security policies are enabled, is needed a fingerprint of the user enroled to the project to access through an endpoint.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Users
+                    p(style="color: #343434; padding: 0 50px").
+                        Users are the ones who can manage the projects or make requests to then. To be able to do that, a user must be enrolled to the desired project by assigning permissions to him. Users will use their fingerprints to handle the API endpoints when the project's security is enabled. A fingerprint is a 64 characters long key which identifies the user while operating the API. 
+                    br
+    .row.center(style="padding: 0 20px; margin-bottom: 30px;")
+        a(href="/docs/projects-and-tables").waves-effect.waves-light.btn(style="background-color: #e65100") Continue with: Projects and tables
+            i.material-icons.right arrow_forward
+
+block scripts_bottom
+    script.
+        $(function(){
+            jQuery('.panel-project-link .card').each(function(index) {
+                jQuery(this).delay(100*index).animate({ opacity: 1 }, 0,function(){
+                    jQuery(this).addClass('start');
+                });
+            });
+        });

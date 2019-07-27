@@ -1,0 +1,126 @@
+extends layout
+
+block view-title
+    h3.panel-title Documentation | Projects and tables
+
+block content
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Managing projects and tables in a Baserel Instance.
+    .row(style="padding: 0 20px; margin-bottom: 30px;")
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Creating a project
+                    p(style="color: #343434; padding: 0 50px").
+                        To create a project you can either click the "New project" button in the Dashboard or go to the Projects section in the Side Menu and click the "+" button. You will be asked for a name that will be used as an alias for the project.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Editing a project
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the project section you can edit a project by clicking the Pencil Green Button in the actions column. There you will be able to change the Name alias of the project, the color to identify the project and the security. If the security is enabled, you will need to pass your user Fingerprint as an Authorization to handle your project's API requests.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Deleting a project
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the project section you can delete a project by clicking the Trash Red Button in the actions column. It has to be noted that this action can be undone, and all the project data will be gone permanently.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Creating a table
+                    p(style="color: #343434; padding: 0 50px").
+                        To create a table you have go to the projects section and click on the project's name that you would like to create a table in. Then, you can add the new table by clicking the big green "+" button, where you wil be asked to type the new table name alias.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Adding columns to a table
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the project's table section you can add columns to a table by clicking the desired table's name. Then, you have to click the "+" button at the right of the table and type the column key name. The column key name is used as an identifier for the column and will be used to perform operations within its table.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Edit a column in a table
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the table's records section you can edit a column by clicking the column's name. There, you will be able to rename the key name and the alias name of that column. The alias name is used as a display name to make it easy to identify your columns when using complex names.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Sort columns in a table
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the table's records section you can sort the table's columns by clicking any column's name and then clicking the "Sort" button. There, you will be able to change the order the columns are being shown in the table.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Delete a column in a table
+                    p(style="color: #343434; padding: 0 50px").
+                        To delete a column you have to click the desired column's name and then click the "Delete" button. This action cannot be undone and all the data related to that column will be gone permanently.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Adding records to a table
+                    p(style="color: #343434; padding: 0 50px").
+                        You can add records to a table by clicking the big green "+" button at the right corner. There, you will be able to fill all the columns available in the table and save the record.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Editing a record in a table
+                    p(style="color: #343434; padding: 0 50px").
+                        You can edit a record by clicking the field's value that will be edited (Even if the value is empty). There, you will be able to edit all the fields related to that record.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Deleting records from a table
+                    p(style="color: #343434; padding: 0 50px").
+                        You can delete any records by marking its checkboxes at the left of the record. Then the green add button will turn into a red delete button, which means your are in the delete mode. While clicking the red delete button all the marked records will be deleted permanently.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Editing a table
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the project's table section you can edit a table by clicking the Pencil Green Button in the actions column. There you will be able to change the Name alias of the table.
+                    br
+        .col.s12.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="#").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="width: 0; min-width: 40%")
+                        h3.panel-project-title Deleting a table
+                    p(style="color: #343434; padding: 0 50px").
+                        Once in the projects table section you can delete a project by clicking the Trash Red Button in the actions column. It has to be noted that this action can be undone, and all the table data will be gone permanently.
+                    br
+    .row.center(style="padding: 0 20px; margin-bottom: 30px;")
+        a(href="/docs/projects-and-tables").waves-effect.waves-light.btn(style="background-color: #b71c1c") Continue with: Using the API
+            i.material-icons.right arrow_forward
+
+block scripts_bottom
+    script.
+        $(function(){
+            jQuery('.panel-project-link .card').each(function(index) {
+                jQuery(this).delay(100*index).animate({ opacity: 1 }, 0,function(){
+                    jQuery(this).addClass('start');
+                });
+            });
+        });

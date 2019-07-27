@@ -1,0 +1,686 @@
+extends layout
+
+block style
+    style.
+        .panel-column-add-btn{
+            width: 100%;
+            color: #039be5;
+            border: 1px dashed #039be5;
+            text-align: left;
+        }
+        .removeAddColumnKeyIcon{
+            position: absolute;
+            top: 14px;
+            font-size: 20px;
+            color: #b71c1c;
+        }
+
+
+block view-title
+    h3.panel-title 
+        a(href="/projects") #{project.name}
+        .material-icons chevron_right
+        a(href="/projects/#{project.code}") #{table.name}
+        .material-icons chevron_right
+        | Records
+
+block content
+    .row
+        .col.s12.panel-content-table-container
+            .card
+                .card-image
+                    if table.columns_count > 0
+                        button#addRecordBtn.btn-floating.halfway-fab.waves-effect.waves-light.btn-large.panel-add-btn
+                            i.material-icons add
+                        button#deleteRecordBtn(style="display: none;").btn-floating.halfway-fab.waves-effect.waves-light.btn-large.panel-add-btn.red
+                            i.material-icons delete
+
+                .card-content(style="overflow-x: auto;")
+                    if e
+                        p#error.text-center
+                            =t
+                    else
+                        table#table
+                            thead
+                                tr
+                                    th(style="width: 30px;")
+                                        label
+                                            input#markAllRecord(type="checkbox")
+                                            span(style="margin-top: 5px;")
+                                    th ID
+                                    each sort_column, i in table.columns_sort
+                                        th
+                                            a(href="#columnEditForm", data-key="#{sort_column}", data-alias="#{columns[sort_column].alias}").editColumnBtn.modal-trigger #{columns[sort_column].alias}
+                                    th(style="width: 30px;")
+                                        a#newColumnBtn(href="#columnAddForm", style="background: transparent; box-shadow: none; color: black").btn.modal-trigger
+                                            i.material-icons add
+                            tbody
+                                each record, id in records
+                                    tr
+                                        td
+                                            label
+                                                input(type="checkbox", data-id="#{id}").markRecord
+                                                span(style="margin-top: 5px;")
+                                        td #{id}
+                                        each sort_column, code in table.columns_sort
+                                            td(id="record_#{id}_#{sort_column}", data-column="#{sort_column}", data-id="#{id}", data-columns="#{table.columns_sort}").editRecordBtn #{record[sort_column]}
+                        if table.records_count == 0
+                            p(style="font-size: 14px; margin-top: 10px;") Nothing to show yet.                       
+    // Modal Structure
+    #columnAddForm.modal(style="width: 30%;")
+        .modal-content
+            h5 Add a new column
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .columnArray.no-margins
+                            .input-field.col.s12(style="margin-bottom: 0")
+                                input.columnName(type='text', maxlenth=20, name="columnKey[]")
+                                label Column key
+                        .col.s12
+                            a#addColumnToArray.waves-effect.waves-light.btn.panel-column-add-btn.white.no-shadows
+                                i.material-icons.left add_circle_outline
+                                | New
+
+            .valign-wrapper
+                #add-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#columnAddFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Add
+
+    // Modal Structure
+    #columnEditForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Edit the column
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editColumnKey(type='text', maxlenth=20, hidden=true)
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editNewColumnKey(type='text', maxlenth=20)
+                            label(for='editNewColumnKey') Column key
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editColumnAlias(type='text', maxlenth=20)
+                            label(for='editColumnAlias') Column alias
+
+            .valign-wrapper
+                #edit-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button(style="margin-right:5px;")#sortColumnBtn.waves-effect.waves-light.btn.orange
+                i.material-icons.right view_column
+                | Sort
+            button(style="margin-right:5px;")#deleteColumnBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+            button#columnEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+
+    // Modal Structure
+    #columnDeleteForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Delete the column
+            p.
+                Are you sure you want to delete permanently this column?
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#deleteColumnKey(type='text', maxlenth=64, hidden="hidden")
+            .valign-wrapper
+                #delete-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#columnDeleteFormBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+
+    // Modal Structure
+    #columnSortForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Drag and sort the columns
+            .row(style="margin-bottom: 0;overflow-y: auto;height: 300px;")
+                ul#sortable.collection
+                    each sort_column, i in table.columns_sort
+                        li.collection-item.column-sort(data-key="#{sort_column}")
+                            i.material-icons.secondary-content drag_handle
+                            | #{columns[sort_column].alias}
+            .valign-wrapper
+                #sort-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#columnSortFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+                                                
+    // Modal Structure
+    #recordAddForm.modal(style="width: 40%;")
+        .modal-content
+            h5 Add a new record
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    each sort_column, i in table.columns_sort
+                        .row(style="margin-bottom: 0")
+                            .input-field.col.s12(style="margin-bottom: 0")
+                                input(type='text', maxlenth=20, data-column="#{sort_column}").record-input
+                                label #{columns[sort_column].alias}
+            .valign-wrapper
+                #add-record-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#recordAddFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Add
+                                                
+    // Modal Structure
+    #recordEditForm.modal(style="width: 40%;")
+        .modal-content
+            h5 Edit a record
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#record_edit_input__id(type='text', maxlenth=20, data-column="_id").record-edit-input
+                            label ID
+                    each sort_column, i in table.columns_sort
+                        .row(style="margin-bottom: 0")
+                            .input-field.col.s12(style="margin-bottom: 0")
+                                input(id="record_edit_input_#{sort_column}", type='text', maxlenth=20, data-column="#{sort_column}").record-edit-input
+                                label #{columns[sort_column].alias}
+            .valign-wrapper
+                #edit-record-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#recordEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+                                                
+    // Modal Structure
+    #recordDeleteForm.modal(style="width: 40%;")
+        .modal-content
+            h5 Delete records
+            p.
+                Are you sure you want to delete permanently the selected records?
+            .valign-wrapper
+                #delete-record-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#recordDeleteFormBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+
+block scripts_bottom
+    script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js")
+    script.
+    
+        var projectCode = "#{project.code}";
+        var tableCode = "#{table.code}";
+        var tableName = "#{table.name}";
+        var instancePath = "#{instance.bsrl_path}";
+
+        $(document).ready(function(){
+            $('.modal').modal();
+            $('select').formSelect();
+            $( "#sortable" ).sortable();
+            $( "#sortable" ).disableSelection();
+            $(".markRecord, #markAllRecord").each(function(){
+                $(this).prop("checked", false);
+            });
+        });
+        $("#markAllRecord").change(function(){
+            $(".markRecord").prop( "checked", $(this).prop("checked") );
+        });
+        $(".markRecord, #markAllRecord").change(function(){
+            if($(".markRecord:checked").length > 0){
+                $("#addRecordBtn").hide();
+                $("#deleteRecordBtn").show();
+            }else{
+                $("#addRecordBtn").show();
+                $("#deleteRecordBtn").hide();
+            }
+        });
+        $("#newColumnBtn").click(function(){
+            $('.columnName').val('');
+            setTimeout(function() { $('.columnName').focus(); }, 100);
+            $('.columnName').next().removeClass('active');
+            $("#add-form-error").hide();
+        });
+        $('body').on('click', '.columnName', function() {
+            $("#add-form-error").hide();
+        });
+        $('body').on('keypress', '.columnName', function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#addColumnToArray').click();
+            }
+        });
+
+        $("#columnAddFormBtn").click(function(){
+
+            $(".columnName").prop('disabled', true);
+            $("#columnAddFormBtn").prop('disabled', true);
+
+            var keySintaxError = false;
+            var keyDuplicatedError = false;
+            var validKeys = [];
+
+            $('.columnName').each(function(){
+                if($(this).val() == "" || !checkAlphaNumeric($(this).val()) || hasWhiteSpace($(this).val())){
+                    keySintaxError = true;
+                }else{
+                    if(validKeys.indexOf($(this).val()) != -1){
+                        keyDuplicatedError = true;
+                    }else{
+                        validKeys.push($(this).val());
+                    }
+                }
+            });
+
+            if(keySintaxError){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("There are invalid column names (Only alphanumeric is supported).");
+
+                $(".columnName").prop('disabled', false);
+                $("#columnAddFormBtn").prop('disabled', false);
+            }else if(keyDuplicatedError){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("There are duplicated column key names.");
+
+                $(".columnName").prop('disabled', false);
+                $("#columnAddFormBtn").prop('disabled', false);
+            }else{
+                
+                $.post( "/service/columns/add", { columns: validKeys, project: projectCode, table: tableCode}, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.reload();
+                    }else if(data.r == 1){
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text(data.t);
+
+                        $(".columnName").prop('disabled', false);
+                        $("#columnAddFormBtn").prop('disabled', false);
+                    }else{
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text('Communication error.');
+
+                        $(".columnName").prop('disabled', false);
+                        $("#columnAddFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#add-form-error").show();
+                    $("#add-form-error b").text('Communication error.');
+
+                    $(".columnName").prop('disabled', false);
+                    $("#columnAddFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $(".editColumnBtn").click(function(){
+            $("#editColumnKey").val($(this).data('key'));
+            $("#editNewColumnKey").val($(this).data('key'));
+            $("#editColumnAlias").val($(this).data('alias'));
+            setTimeout(function() { $('#editNewColumnKey').focus(); }, 100);
+            if($("#editNewColumnKey").val() != "") $('#editNewColumnKey').next().addClass('active');
+            if($("#editColumnAlias").val() != "") $('#editColumnAlias').next().addClass('active');
+            $("#edit-form-error").hide();
+            $("#columnEditForm").modal('open');
+        });
+
+        $('#editNewColumnKey, #editColumnAlias').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#columnEditFormBtn').click();
+            }
+        });
+
+        $("#columnEditFormBtn").click(function(){
+
+            $("#editNewColumnKey").prop('disabled', true);
+            $("#columnEditFormBtn").prop('disabled', true);
+            $("#deleteColumnBtn").prop('disabled', true);
+            $("#editColumnAlias").prop('disabled', true);
+
+            if($("#editNewColumnKey").val() == "" || !checkAlphaNumeric($("#editNewColumnKey").val()) || hasWhiteSpace($("#editNewColumnKey").val())){
+                $("#edit-form-error").show();
+                $("#edit-form-error b").text("Invalid column key.");
+
+                $("#editNewColumnKey").prop('disabled', false);
+                $("#columnEditFormBtn").prop('disabled', false);
+                $("#deleteColumnBtn").prop('disabled', false);
+                $("#editColumnAlias").prop('disabled', false);  
+            }else if($("#editColumnAlias").val() == "" || !checkAlphaNumeric($("#editColumnAlias").val())){
+                $("#edit-form-error").show();
+                $("#edit-form-error b").text("Invalid column alias.");
+
+                $("#editNewColumnKey").prop('disabled', false);
+                $("#columnEditFormBtn").prop('disabled', false);
+                $("#deleteColumnBtn").prop('disabled', false);
+                $("#editColumnAlias").prop('disabled', false);  
+            }else{
+                $.post( "/service/columns/edit", { code: $("#editColumnCode").val(), column: $("#editColumnKey").val(), alias: $("#editColumnAlias").val(), new_column: $("#editNewColumnKey").val(), project: projectCode, table: tableCode }, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.reload();
+                    }else if(data.r == 1){
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text(data.t);
+
+                        $("#editNewColumnKey").prop('disabled', false);
+                        $("#editColumnAlias").prop('disabled', false);
+                        $("#deleteColumnBtn").prop('disabled', false);
+                        $("#columnEditFormBtn").prop('disabled', false);
+                    }else{
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text('Communication error.');
+
+                        $("#editNewColumnKey").prop('disabled', false);
+                        $("#editColumnAlias").prop('disabled', false);
+                        $("#deleteColumnBtn").prop('disabled', false);
+                        $("#columnEditFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#edit-form-error").show();
+                    $("#edit-form-error b").text('Communication error.');
+
+                    $("#editNewColumnKey").prop('disabled', false);
+                    $("#editColumnAlias").prop('disabled', false);
+                    $("#deleteColumnBtn").prop('disabled', false);
+                    $("#columnEditFormBtn").prop('disabled', false);
+                });
+                
+            }
+        });
+
+        $("#deleteColumnBtn").click(function(){
+            $("#deleteColumnKey").val($("#editColumnKey").val());
+            $("#delete-form-error").hide();
+
+            $("#columnEditForm").modal('close');
+
+            $("#editNewColumnKey").prop('disabled', false);
+            $("#editColumnAlias").prop('disabled', false);
+            $("#columnEditFormBtn").prop('disabled', false);
+
+            $("#columnDeleteForm").modal('open');
+        });
+
+        $("#columnDeleteFormBtn").click(function(){
+
+            $("#columnDeleteFormBtn").prop('disabled', true);
+
+            $.post( "/service/columns/delete", { column: $("#deleteColumnKey").val(), project: projectCode, table: tableCode }, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text(data.t);
+
+                    $("#columnDeleteFormBtn").prop('disabled', false);
+                }else{
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text('Communication error.');
+
+                    $("#columnDeleteFormBtn").prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#delete-form-error").show();
+                $("#delete-form-error b").text('Communication error.');
+
+                $("#columnDeleteFormBtn").prop('disabled', false);
+            });
+        });
+
+        $("#sortColumnBtn").click(function(){
+            $("#columnEditForm").modal('close');
+            $("#columnSortForm").modal('open');
+            $("#sort-form-error").hide();
+        });
+
+        $("#columnSortFormBtn").click(function(){
+
+            $("#columnSortFormBtn").prop('disabled', true);
+
+            var columns_sort = new Array();
+
+            $(".column-sort").each(function(){
+                columns_sort.push($(this).data("key")); 
+            });
+
+            $.post( "/service/tables/edit", { code: tableCode, name: tableName, project: projectCode, columns_sort: columns_sort.toString() }, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#sort-form-error").show();
+                    $("#sort-form-error b").text(data.t);
+
+                    $("#columnSortFormBtn").prop('disabled', false);
+                }else{
+                    $("#sort-form-error").show();
+                    $("#sort-form-error b").text('Communication error.');
+
+                    $("#columnSortFormBtn").prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#sort-form-error").show();
+                $("#sort-form-error b").text('Communication error.');
+
+                $("#columnSortFormBtn").prop('disabled', false);
+            });
+        });
+
+        $("#addRecordBtn").click(function(){
+            $("#add-record-form-error").hide();
+            
+            setTimeout(function() { $('.record-input')[0].focus(); }, 100);
+            $('.record-input').prop('disabled', false);
+
+            $("#recordAddForm").modal('open');
+        });
+        $('.record-input').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#recordAddFormBtn').click();
+            }
+        });
+
+        $(".record-input").click(function(){
+            $("#add-record-form-error").hide();
+        });
+
+        $("#recordAddFormBtn").click(function(){
+
+            $("#recordAddFormBtn").prop('disabled', true);
+            $('.record-input').prop('disabled', true);
+
+            var record_values = new Object();
+
+            $(".record-input").each(function(){
+                record_values[$(this).data("column")] = $(this).val();
+            });
+
+            $.post( "/service/records/add/"+projectCode+"/"+tableCode, record_values, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#add-record-form-error").show();
+                    $("#add-record-form-error b").text(data.t);
+
+                    $("#recordAddFormBtn").prop('disabled', false);
+                    $('.record-input').prop('disabled', false);
+                }else{
+                    $("#add-record-form-error").show();
+                    $("#add-record-form-error b").text('Communication error.');
+
+                    $("#recordAddFormBtn").prop('disabled', false);
+                    $('.record-input').prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#add-record-form-error").show();
+                $("#add-record-form-error b").text('Communication error.');
+
+                $("#recordAddFormBtn").prop('disabled', false);
+                $('.record-input').prop('disabled', false);
+            });
+        });
+        $(".editRecordBtn").click(function(){
+            $("#edit-record-form-error").hide();
+
+            $("#record_edit_input__id").val($(this).data("id"));
+            $("#record_edit_input__id").prop('disabled', true);
+            $('#record_edit_input__id').next().addClass('active');
+            
+            var sel_column = $(this).data("column");
+            
+            setTimeout(function() { $("#record_edit_input_"+sel_column).focus(); }, 100);
+
+            $('.record-edit-input').not('#record_edit_input__id').prop('disabled', false);
+
+            var record_edit_columns = $(this).data("columns").split(",");
+
+            for(var i = 0; i < record_edit_columns.length; i++){
+
+                var record_input = $("#record_edit_input_"+record_edit_columns[i]);
+
+                record_input.val($("#record_"+$(this).data("id")+"_"+record_edit_columns[i]).text());
+
+                if(record_input.val() != "") record_input.next().addClass('active');
+            }
+
+            $("#recordEditForm").modal('open');
+        });
+        $('.record-edit-input').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#recordEditFormBtn').click();
+            }
+        });
+
+        $(".record-edit-input").click(function(){
+            $("#edit-record-form-error").hide();
+        });
+
+        $("#recordEditFormBtn").click(function(){
+
+            $("#recordEditFormBtn").prop('disabled', true);
+            $('.record-edit-input').not('#record_edit_input__id').prop('disabled', true);
+
+            var record_values = new Object();
+
+            $(".record-edit-input").each(function(){
+                record_values[$(this).data("column")] = $(this).val();
+            });
+
+            $.post( "/service/records/edit/"+projectCode+"/"+tableCode, record_values, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#edit-record-form-error").show();
+                    $("#edit-record-form-error b").text(data.t);
+
+                    $("#recordAddFormBtn").prop('disabled', false);
+                    $('.record-edit-input').not('#record_edit_input__id').prop('disabled', false);
+                }else{
+                    $("#edit-record-form-error").show();
+                    $("#edit-record-form-error b").text('Communication error.');
+
+                    $("#recordAddFormBtn").prop('disabled', false);
+                    $('.record-edit-input').not('#record_edit_input__id').prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#edit-record-form-error").show();
+                $("#edit-record-form-error b").text('Communication error.');
+
+                $("#recordAddFormBtn").prop('disabled', false);
+                $('.record-edit-input').not('#record_edit_input__id').prop('disabled', false);
+            });
+        });
+        $("#deleteRecordBtn").click(function(){
+            $("#delete-record-form-error").hide();
+
+            $("#recordDeleteForm").modal('open');
+        });
+
+        $("#recordDeleteFormBtn").click(function(){
+
+            $("#recordDeleteFormBtn").prop('disabled', true);
+
+            var record_values = new Object();
+            record_values["_where"] = "";
+
+            $(".markRecord:checked").each(function(){
+                if(record_values["_where"] == ""){
+                    record_values["_where"] = "_id == "+$(this).data("id");
+                }else{
+                    record_values["_where"] += " || _id == "+$(this).data("id");
+                }
+            });
+
+            $.post( "/service/records/delete/"+projectCode+"/"+tableCode, record_values, "json")
+            .done(function( data ) {
+
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#delete-record-form-error").show();
+                    $("#delete-record-form-error b").text(data.t);
+
+                    $("#recordDeleteFormBtn").prop('disabled', false);
+                }else{
+                    $("#delete-record-form-error").show();
+                    $("#delete-record-form-error b").text('Communication error.');
+
+                    $("#recordDeleteFormBtn").prop('disabled', false);ss
+                }
+            })
+            .fail(function() {
+                $("#delete-record-form-error").show();
+                $("#delete-record-form-error b").text('Communication error.');
+
+                $("#recordDeleteFormBtn").prop('disabled', false);
+            });
+        });
+
+        $('#addColumnToArray').click(function(){
+            $(".columnArray").append('<div style="margin-bottom: 0" class="input-field col s12"><input maxlenth="20" class="columnName" type="text" name="columnKey[]"><label class="">Column key</label><a href="#!" onclick="removeAddColumnKey(this)" class="removeAddColumnKey"><i class="material-icons removeAddColumnKeyIcon">remove_circle_outline</i></a></div>');
+            setTimeout(function() { $('.columnName:last').focus(); }, 100);
+            $('.columnName:last').next().removeClass('active');
+        });
+
+        function removeAddColumnKey(el){
+            $(el).parent().remove();
+        };
+
+        function checkAlphaNumeric(data) {
+            var letters = /^[a-zA-Z0-9\s]+$/;
+            if (data.match(letters)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }

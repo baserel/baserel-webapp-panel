@@ -1,0 +1,44 @@
+extends layout
+
+block view-title
+    h3.panel-title Dashboard
+
+block content
+
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Recent projects
+    .row(style="padding: 0 10px;")
+        - var i = 0;
+        - var ir = 0;
+        each projectTmp, projectCode in projects
+            - if(recentProjects.indexOf(projectCode) == -1) recentProjects.push(projectCode);
+            - ir++;
+            - if(ir == 7) break;
+        each code, inx in recentProjects
+            - var project = projects[code];
+            - i++;
+            .col.s3.panel-project-col
+                .card.center(style="background-color: #fafafa;")
+                    a(href="/projects/#{code}").panel-project-link
+                        .card.center(class="panel-project-color-#{project.color}")
+                            i.material-icons(style="font-size: 80px; color: #fafafa;") folder_open
+                            h3.panel-project-title #{project.name}
+            if i == 7
+                - break;
+        .col.s3.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/projects?add").panel-project-link
+                    .card.center.panel-project-color-new
+                        i.material-icons(style="font-size: 80px; color: #fafafa;") add
+                        h3.panel-project-title New project
+
+block scripts_bottom
+    script.
+        $(function(){
+            jQuery('.panel-project-link .card').each(function(index) {
+                jQuery(this).delay(100*index).animate({ opacity: 1 }, 0,function(){
+                    jQuery(this).addClass('start');
+                });
+            });
+        });
+        

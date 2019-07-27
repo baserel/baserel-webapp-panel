@@ -1,0 +1,263 @@
+extends layout
+
+block style
+    link(rel='stylesheet', href='/codemirror-5.48.2/lib/codemirror.css')
+    link(rel='stylesheet', href='/codemirror-5.48.2/theme/base16-dark.css')
+    script(src='/codemirror-5.48.2/lib/codemirror.js')
+    script(src='/codemirror-5.48.2/mode/javascript/javascript.js')
+    script(src='/codemirror-5.48.2/addon/selection/active-line.js')
+    script(src='/codemirror-5.48.2/addon/edit/matchbrackets.js')
+
+    style.
+
+        .codebox-head{
+            width: 100%;
+            color: #bdbdbd;
+            background-color: #272727;
+        }
+        .codebox-head p{
+            margin: 0;
+            padding: 0;
+            padding-left: 20px;
+            font-size: 12px;
+        }
+        .codebox-body{
+            overflow: auto;
+            height: 300px;
+        }
+        .codebox-body textarea{
+            height: 300px; 
+            border: none; 
+            padding: 10px 2px; 
+            margin: 0; 
+            color: #e0e0e0; 
+            font-size: 14px;
+            font-family: 'Fira Sans', sans-serif;
+        }
+        body{
+            background: #212121;
+        }
+
+block view-title
+    h3.panel-title Console
+
+block content
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Learn how to deal with the API. Read the docs 
+            a(href="/docs/api") Here.
+    .row(style="padding: 20px 20px; background-color: #212121; margin-bottom: 0;")
+        .input-field.col.s3.console-input
+            select#console_project
+                option(value='', disabled='', selected='') Choose a project
+                each project, code in projects
+                    option(value='#{code}') #{project.name}
+        .input-field.col.s3.console-input
+            select#console_table(disabled="true")
+                option(value='', disabled='', selected='') Choose a table
+        .input-field.col.s3.console-input
+            select#console_action
+                option(value='', disabled='', selected='') Choose an action
+                option(value='put') PUT
+                option(value='get') GET
+                option(value='del') DEL
+        .col.s3(style="position: relative; margin-top: 1rem; margin-bottom: 1rem;")
+            button#console_lookup_btn(href="#lookupModal").waves-effect.waves-light.btn.modal-trigger(style="height: 46px; line-height: 46px; background-color: #01579b; margin-right: 10px;")
+                i.material-icons.right search
+                | Lookup
+            button#console_send_btn.waves-effect.waves-light.btn(style="height: 46px; line-height: 46px; background-color: #01579b")
+                i.material-icons.right send
+                | Send
+    .row(style="padding: 0 0px; background-color: #212121; overflow: hidden; ")
+        .col.s6(style="background-color: #151515; padding: 0; border-right: 1px solid #212121")
+                .codebox-head.z-depth-1
+                    p Request
+                .codebox-body
+                    .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
+                        textarea#console_req.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder="{}")
+        .col.s6(style="background-color: #151515; padding: 0; border-left: 1px solid #212121")
+                .codebox-head.z-depth-1
+                    p Response
+                .codebox-body
+                    .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
+                        textarea#console_res.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder="{}")
+    #lookupModal.modal(style="width: 400px;")
+        .modal-content
+            h4 Lookup
+            .row
+                .input-field.col.s12
+                    input#console_user_fingerprint.validate(placeholder='Fingerprint', type='text', readonly="true")
+                    label(for='console_user_fingerprint') Fingerprint
+            .row
+                .input-field.col.s12
+                    input#console_api_address.validate(placeholder='API Address', type='text', readonly="true")
+                    label(for='console_api_address') API Address
+            .row
+                .col.s12
+                    label Table Keys
+                    ul#lookupColumns.collection
+
+
+
+block scripts_bottom
+    script.
+
+        var editor_req = CodeMirror.fromTextArea(document.getElementById("console_req"), {
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            theme: 'base16-dark'
+        });
+        var editor_res = CodeMirror.fromTextArea(document.getElementById("console_res"), {
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            theme: 'base16-dark'
+        });
+
+        var url = window.location.href;
+
+        var urlp = url.split('/');
+        var urli = urlp[2].split('.');
+        var urld = urli[0].slice(0,3)+(Number(urli[0].slice(3,urli[0].Length))+10000);
+
+        var instancePath = urlp[0]+'//'+urld+'.'+urli[1]+'.'+urli[2]+'/';
+
+        var tables = {};
+
+        $(document).ready(function(){
+
+            $('#console_table').prop('disabled', 'true');
+            $('select').formSelect();
+            $('.modal').modal();
+
+            $('#console_lookup_btn').prop('disabled', 'true');
+            $('#console_send_btn').prop('disabled', 'true');
+
+            $('#console_user_fingerprint').val("#{fingerprint}");
+
+            editor_req.setValue('{}');
+            editor_res.setValue('{}');
+
+        });
+        function setSelectionRange(input, selectionStart, selectionEnd) {
+            if (input.setSelectionRange) {
+                input.focus();
+                input.setSelectionRange(selectionStart, selectionEnd);
+            }
+            else if (input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', selectionEnd);
+                range.moveStart('character', selectionStart);
+                range.select();
+            }
+        }
+
+        function replaceSelection (input, replaceString) {
+            if (input.setSelectionRange) {
+                var selectionStart = input.selectionStart;
+                var selectionEnd = input.selectionEnd;
+                input.value = input.value.substring(0, selectionStart)+ replaceString + input.value.substring(selectionEnd);
+
+                if (selectionStart != selectionEnd){ 
+                    setSelectionRange(input, selectionStart, selectionStart + 	replaceString.length);
+                }else{
+                    setSelectionRange(input, selectionStart + replaceString.length, selectionStart + replaceString.length);
+                }
+
+            }else if (document.selection) {
+                var range = document.selection.createRange();
+
+                if (range.parentElement() == input) {
+                    var isCollapsed = range.text == '';
+                    range.text = replaceString;
+
+                    if (!isCollapsed)  {
+                        range.moveStart('character', -replaceString.length);
+                        range.select();
+                    }
+                }
+            }
+        }
+
+
+        // We are going to catch the TAB key so that we can use it, Hooray!
+        function catchTab(item,e){
+            if(navigator.userAgent.match("Gecko")){
+                c=e.which;
+            }else{
+                c=e.keyCode;
+            }
+            if(c==9){
+                replaceSelection(item,String.fromCharCode(9));
+                setTimeout("document.getElementById('"+item.id+"').focus();",0);	
+                return false;
+            }
+
+        }
+
+        $("#console_project").change(function(){
+            $.post( "/service/console/tables/"+$("#console_project").val(), function( data ) {
+                $('#console_table').html('<option value="" disabled="" selected="">Choose a table</option>');
+
+                tables = data;
+
+                for (var key in data){
+                    $('#console_table').append($('<option>', {
+                        value: key,
+                        text: data[key]['name']
+                    }));
+                }
+                $("#console_table").prop('disabled', false);
+                
+                M.FormSelect.init($('#console_table'));
+
+                $('#console_lookup_btn').prop('disabled', 'true');
+                $('#console_send_btn').prop('disabled', 'true');
+            });
+        });
+
+        $("#console_table").change(function(){
+
+            if($("#console_action").val() != ""){
+                $("#console_lookup_btn").removeAttr('disabled');
+                $("#console_send_btn").removeAttr('disabled');
+            }
+
+        });
+
+        $("#console_action").change(function(){
+
+            $("#console_lookup_btn").removeAttr('disabled');
+            $("#console_send_btn").removeAttr('disabled');
+
+        });
+
+        $("#console_lookup_btn").click(function(){
+            set_lookup();
+        });
+
+        $("#console_send_btn").click(function(){
+
+            editor_res.setValue('');
+
+            $.post( "/service/console/request", {request_address:get_api_address(), request_body:$('#console_req').val()}, function( data ) {
+                editor_res.setValue(data);
+            });
+        });
+
+        function set_lookup(){
+            $("#console_api_address").val(instancePath.replace("locNaN.undefined.undefined", "localhost:8000")+$('#console_action').val()+"/"+$('#console_project').val()+'/'+$('#console_table').val());
+
+            $('#lookupColumns').html('');
+
+            columns = tables[$('#console_table').val()]['columns'].split(',');
+
+            for (var i in columns){
+                $('#lookupColumns').append($('<li class="collection-item">'+columns[i]+'</li>'));
+            }
+        }
+
+        function get_api_address(){
+            return instancePath+$('#console_action').val()+"/"+$('#console_project').val()+'/'+$('#console_table').val();
+        }

@@ -1,0 +1,360 @@
+extends layout
+
+block view-title
+    h3.panel-title Projects
+block content
+    .row
+        .col.s12.panel-content-table-container
+            .card
+                .card-image
+                    button#newProjectBtn(href="#projectAddForm").btn-floating.halfway-fab.waves-effect.waves-light.btn-large.panel-add-btn.modal-trigger
+                        i.material-icons add
+                .card-content
+                    if e
+                        p#error.text-center
+                            =t
+                    else
+                        table#table
+                            thead
+                                tr
+                                    th Name
+                                    th Tables
+                                    th Security
+                                    th(style="width: 95px") Actions
+                            tbody
+                                each project, code in projects
+                                    tr
+                                        td
+                                            a(href="/projects/#{code}")
+                                                | #{project.name}
+                                        td= project.tables_count
+                                        td
+                                            if project.security == "true"
+                                                span.badge.blue(data-badge-caption='Enabled', style='color: #EEE; font-size: 12px;')
+                                            else
+                                                span.badge.red(data-badge-caption='Disabled', style='color: #EEE; font-size: 12px;')
+                                        td
+                                            a.editProjectBtn(data-code="#{code}", data-name="#{project.name}", data-color="#{project.color}", data-security="#{project.security}").btn-floating
+                                                i.material-icons edit
+                                            a.deleteProjectBtn(data-code="#{code}", style="margin-left: 5px;").btn-floating.red
+                                                i.material-icons delete
+    // Modal Structure
+    #projectAddForm.modal(style="width: 30%;")
+        .modal-content
+            h5 Add
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#projectName(type='text', maxlenth=20)
+                            label(for='projectName') Project label
+            .valign-wrapper
+                #add-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#projectAddFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Add
+
+    // Modal Structure
+    #projectEditForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Edit
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editProjectCode(type='text', maxlenth=64, hidden="hidden")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editProjectName(type='text', maxlenth=20)
+                            label(for='editProjectName') Project name
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            select#editProjectSecurity
+                                option(value='', disabled='') Choose the security
+                                option(value='true', selected='') Enabled
+                                option(value='false') Disabled
+                            label Security
+                        .input-field.col.s12.input-color(style="margin-bottom: 0")
+                            input#editProjectColor(type='text', maxlenth=20, readonly, value="123123")
+                            label(for='editProjectColor') Color
+                            .input-color-display
+
+            .valign-wrapper
+                #edit-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#projectEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+
+    // Modal Structure
+    #projectDeleteForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Delete
+            p.
+                Are you sure you want to delete permanently this project?
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#deleteProjectCode(type='text', maxlenth=64, hidden="hidden")
+            .valign-wrapper
+                #delete-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#projectDeleteFormBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+
+    #projectEditColor.modal(style="width: 550px; overflow-y: visible;")
+        .modal-content
+            h5 Pick up a color
+            .row(style="margin-bottom: 0")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #b71c1c", data-color="b71c1c")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #880e4f", data-color="880e4f")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #4a148c", data-color="4a148c")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #311b92", data-color="311b92")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #1a237e", data-color="1a237e")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #0d47a1", data-color="0d47a1")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #01579b", data-color="01579b")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #006064", data-color="006064")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #004d40", data-color="004d40")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #1b5e20", data-color="1b5e20")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #33691e", data-color="33691e")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #827717", data-color="827717")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #f57f17", data-color="f57f17")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #ff6f00", data-color="ff6f00")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #e65100", data-color="e65100")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #bf360c", data-color="bf360c")
+                .col.s2
+                    .color-pick-up.z-depth-3(style="width: 100%; height: 61.5px; background-color: #3e2723", data-color="3e2723")
+
+        .modal-footer
+            button#projectCloseColorPickerBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right cancel
+                | Cancel
+
+block scripts_bottom
+    if query.add != undefined
+        script.
+            $(document).ready(function(){
+                setTimeout(function() { $("#newProjectBtn").click(); }, 100);
+            });
+
+    script.
+        var color_labels = ["Red","Pink","Purple","Deed Purple","Indigo","Blue","Light Blue","Cyan","Teal","Green","Light Green","Lime","Yellow","Amber","Orange","Deep Orange","Brown"];
+        var color_display = ["b71c1c","880e4f","4a148c","311b92","1a237e","0d47a1","01579b","006064","004d40","1b5e20","33691e","827717","f57f17","ff6f00","e65100","bf360c","3e2723"];
+       
+        $(document).ready(function(){
+            $('.modal').modal();
+            $('select').formSelect();
+            $("#add-form-error").hide();
+        });
+        function getPathFromUrl(url) {
+            return window.location.href.split("?")[0];
+        }
+        $("#newProjectBtn").click(function(){
+            $('#projectName').val('');
+            $('#projectName').next().removeClass('active');
+            setTimeout(function() { $('#projectName').focus(); }, 100);
+            $("#add-form-error").hide();
+        });
+        $('#projectName').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#projectAddFormBtn').click();
+            }
+        });
+        $("#projectName").click(function(){
+            $("#add-form-error").hide();
+        });
+        $("#projectAddFormBtn").click(function(){
+
+            $("#projectName").prop('disabled', true);
+            $("#projectAddFormBtn").prop('disabled', true);
+
+            if($("#projectName").val() == "" || !checkAlphaNumeric($("#projectName").val()) || hasWhiteSpace($("#projectName").val())){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("Invalid project name.");
+
+                $("#projectName").prop('disabled', false);
+                $("#projectAddFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/projects/add", { name: $("#projectName").val()}, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.replace(getPathFromUrl());
+                    }else if(data.r == 1){
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text(data.t);
+
+                        $("#projectName").prop('disabled', false);
+                        $("#projectAddFormBtn").prop('disabled', false);
+                    }else{
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text('Communication error.');
+
+                        $("#projectName").prop('disabled', false);
+                        $("#projectAddFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#add-form-error").show();
+                    $("#add-form-error b").text('Communication error.');
+
+                    $("#projectName").prop('disabled', false);
+                    $("#projectAddFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $('#editProjectName').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#projectEditFormBtn').click();
+            }
+        });
+
+        $("#editProjectName").click(function(){
+            $("#edit-form-error").hide();
+        });
+        $(".editProjectBtn").click(function(){
+            $("#editProjectCode").val($(this).data('code'));
+            $("#editProjectName").val($(this).data('name'));
+            $("#editProjectColor").val(color_labels[color_display.indexOf($(this).data('color').toString())]);
+            $(".input-color-display").attr('class', 'input-color-display');
+            $(".input-color-display").addClass("input-color-display-"+$(this).data('color'));
+            setTimeout(function() { $('#editProjectName').focus(); }, 100);
+            if($("#editProjectName").val() != "") $('#editProjectName').next().addClass('active');
+            $('#editProjectColor').next().addClass('active');
+            $("#editProjectSecurity").val($(this).data('security').toString());
+            $("#editProjectSecurity").formSelect();
+            $("#edit-form-error").hide();
+            $("#projectEditForm").modal('open');
+        });
+
+        $("#editProjectColor, .input-color-display").click(function(){
+            $("#edit-form-error").hide();
+            $("#projectEditColor").modal('open');
+        });
+
+        $(".color-pick-up").click(function(){
+            $(".input-color-display").attr('class', 'input-color-display');
+            $(".input-color-display").addClass("input-color-display-"+$(this).data('color'));
+            $("#editProjectColor").val(color_labels[color_display.indexOf($(this).data('color').toString())]);
+            $("#projectEditColor").modal('close');
+        });
+
+        $("#projectCloseColorPickerBtn").click(function(){
+            $("#projectEditColor").modal('close');
+        });
+
+        $("#projectEditFormBtn").click(function(){
+
+            $("#editProjectName").prop('disabled', true);
+            $("#editProjectSecurity").prop('disabled', true);
+            $("#projectEditFormBtn").prop('disabled', true);
+
+            if($("#editProjectName").val() == "" || !checkAlphaNumeric($("#editProjectName").val()) || hasWhiteSpace($("#editProjectName").val())){
+                $("#edit-form-error").show();
+                $("#edit-form-error b").text("Invalid project name.");
+
+                $("#editProjectName").prop('disabled', false);
+                $("#editProjectSecurity").prop('disabled', false);
+                $("#projectEditFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/projects/edit", { code: $("#editProjectCode").val(), name: $("#editProjectName").val(), color: color_display[color_labels.indexOf($("#editProjectColor").val())], security: ($("#editProjectSecurity").parent().children('input').val() == "Disabled" ? "false" : "true") }, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.replace(getPathFromUrl());
+                    }else if(data.r == 1){
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text(data.t);
+
+                        $("#editProjectName").prop('disabled', false);
+                        $("#editProjectSecurity").prop('disabled', false);
+                        $("#projectEditFormBtn").prop('disabled', false);
+                    }else{
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text('Communication error.');
+
+                        $("#editProjectName").prop('disabled', false);
+                        $("#editProjectSecurity").prop('disabled', false);
+                        $("#projectEditFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#edit-form-error").show();
+                    $("#edit-form-error b").text('Communication error.');
+
+                    $("#editProjectName").prop('disabled', false);
+                    $("#editProjectSecurity").prop('disabled', false);
+                    $("#projectEditFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $(".deleteProjectBtn").click(function(){
+            $("#deleteProjectCode").val($(this).data('code'));
+            $("#delete-form-error").hide();
+            $("#projectDeleteForm").modal('open');
+        });
+
+        $("#projectDeleteFormBtn").click(function(){
+
+            $("#projectDeleteFormBtn").prop('disabled', true);
+
+            $.post( "/service/projects/delete", { code: $("#deleteProjectCode").val() }, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.replace(getPathFromUrl());
+                }else if(data.r == 1){
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text(data.t);
+
+                    $("#projectDeleteFormBtn").prop('disabled', false);
+                }else{
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text('Communication error.');
+
+                    $("#projectDeleteFormBtn").prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#delete-form-error").show();
+                $("#delete-form-error b").text('Communication error.');
+
+                $("#projectDeleteFormBtn").prop('disabled', false);
+            });
+        });
+
+        function checkAlphaNumeric(data) {
+            var letters = /^[a-zA-Z0-9\s]+$/;
+            if (data.match(letters)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }

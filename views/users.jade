@@ -1,0 +1,370 @@
+extends layout
+
+block view-title
+    h3.panel-title Users
+block content
+    .row
+        .col.s12.panel-content-table-container
+            .card
+                .card-image
+                    button#newUserBtn(href="#userAddForm").btn-floating.halfway-fab.waves-effect.waves-light.btn-large.panel-add-btn.modal-trigger
+                        i.material-icons add
+                .card-content
+                    if e
+                        p#error.text-center
+                            =t
+                    else
+                        table#table
+                            thead
+                                tr
+                                    th Name
+                                    th Email
+                                    th Enabled
+                                    th Super user
+                                    th(style="width: 95px") Actions
+                            tbody
+                                each user, code in users
+                                    tr
+                                        td
+                                            a(href="/users/#{user.email}")
+                                                | #{user.name}
+                                        td= user.email
+                                        td
+                                            if user.enabled == "true"
+                                                span.badge.blue(data-badge-caption='Yes', style='color: #EEE; font-size: 12px;')
+                                            else
+                                                span.badge.red(data-badge-caption='No', style='color: #EEE; font-size: 12px;')
+                                        td
+                                            if user.super == "true"
+                                                span.badge.blue(data-badge-caption='Yes', style='color: #EEE; font-size: 12px;')
+                                            else
+                                                span.badge.red(data-badge-caption='No', style='color: #EEE; font-size: 12px;')
+                                        td
+                                            a.editUserBtn(data-code="#{code}", data-name="#{user.name}", data-email="#{user.email}", data-enabled="#{user.enabled}", data-super="#{user.super}").btn-floating
+                                                i.material-icons edit
+                                            a.deleteUserBtn(data-code="#{code}", style="margin-left: 5px;").btn-floating.red
+                                                i.material-icons delete
+    // Modal Structure
+    #userAddForm.modal(style="width: 30%;")
+        .modal-content
+            h5 Add
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userName(type='text', maxlenth=20)
+                            label(for='userName') Name
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userEmail(type='text', maxlenth=20)
+                            label(for='userEmail') Email
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userPass(type='password', maxlenth=20)
+                            label(for='userPass') Password
+                        .input-field.col.s12
+                            p(style="color: #9e9e9e; font-size: 1rem;") Super user
+                            .switch
+                                label
+                                    | No
+                                    input#userSuper(type='checkbox')
+                                    span.lever
+                                    | Yes
+                        .input-field.col.s12
+                            p(style="color: #9e9e9e; font-size: 1rem;") Enabled
+                            .switch
+                                label
+                                    | No
+                                    input#userEnabled(type='checkbox')
+                                    span.lever
+                                    | Yes
+
+            .valign-wrapper
+                #add-form-error.card.red.form-error(style="width: 100%;text-align: center;height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#userAddFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Add
+    
+    // Modal Structure
+    #userEditForm.modal(style="width: 30%;")
+        .modal-content
+            h5 Add
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userEditName(type='text', maxlenth=20)
+                            label(for='userName') Name
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userEditEmail(type='text', maxlenth=20)
+                            label(for='userEmail') Email
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#userEditPass(type='password', maxlenth=20)
+                            label(for='userPass') Change Password
+                        .input-field.col.s12
+                            label Super user
+                            .switch
+                                label
+                                    | No
+                                    input#userEditSuper(type='checkbox')
+                                    span.lever
+                                    | Yes
+                        .input-field.col.s12
+                            label Enabled
+                            .switch
+                                label
+                                    | No
+                                    input#userEditEnabled(type='checkbox')
+                                    span.lever
+                                    | Yes
+
+            .valign-wrapper
+                #edit-form-error.card.red.form-error(style="width: 100%;text-align: center;height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#userEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+
+
+    // Modal Structure
+    #userDeleteForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Delete
+            p.
+                Are you sure you want to delete permanently this user?
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#deleteUserEmail(type='text', maxlenth=20, hidden="hidden")
+            .valign-wrapper
+                #delete-form-error.card.red.form-error(style="width: 100%;text-align: center;height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#userDeleteFormBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+
+block scripts_bottom
+    if query.add != undefined
+        script.
+            $(document).ready(function(){
+                setTimeout(function() { $("#newUserBtn").click(); }, 100);
+            });
+
+    script.
+        $(document).ready(function(){
+            $('.modal').modal();
+            $('select').formSelect();
+            $("#add-form-error").hide();
+        });
+        function getPathFromUrl(url) {
+            return window.location.href.split("?")[0];
+        }
+        function validateEmail(email) 
+        {
+            var re = /\S+@\S+\.\S+/;
+            return re.test(email);
+        }
+        $("#newUserBtn").click(function(){
+            $('#userName').val('');
+            $('#userName').next().removeClass('active');
+            setTimeout(function() { $('#userName').focus(); }, 100);
+            $("#add-form-error").hide();
+        });
+        $('#userName, #userEmail, #userPass, #userSuper, #userEnabled').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#userAddFormBtn').click();
+            }
+        });
+        $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").click(function(){
+            $("#add-form-error").hide();
+        });
+        $("#userAddFormBtn").click(function(){
+
+            $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', true);
+            $("#userAddFormBtn").prop('disabled', true);
+
+            if($("#userName").val() == "" || !checkAlphaNumeric($("#userName").val())){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("Invalid user name.");
+
+                $("#userName").prop('disabled', false);
+                $("#userAddFormBtn").prop('disabled', false);
+            }else if(!validateEmail($("#userEmail").val())){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("Invalid user email.");
+
+                $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', false);
+                $("#userAddFormBtn").prop('disabled', false);
+            }else if($("#userPass").val().length < 8){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("Password must be >= 8.");
+
+                $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', false);
+                $("#userAddFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/users/add", { name: $("#userName").val(), pass: $("#userPass").val(), email: $("#userEmail").val(), super: $("#userSuper").prop("checked"), enabled: $("#userEnabled").prop("checked")}, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.replace(getPathFromUrl());
+                    }else if(data.r == 1){
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text(data.t);
+
+                        $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', false);
+                        $("#userAddFormBtn").prop('disabled', false);
+                    }else{
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text('Communication error.');
+
+                        $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', false);
+                        $("#userAddFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#add-form-error").show();
+                    $("#add-form-error b").text('Communication error.');
+
+                    $("#userName, #userEmail, #userPass, #userSuper, #userEnabled").prop('disabled', false);
+                    $("#userAddFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $('#edituserName').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#userEditFormBtn').click();
+            }
+        });
+
+        $("#edituserName").click(function(){
+            $("#edit-form-error").hide();
+        });
+        $(".edituserBtn").click(function(){
+            $("#edituserCode").val($(this).data('code'));
+            $("#edituserName").val($(this).data('name'));
+            $("#edituserColor").val(color_labels[color_display.indexOf($(this).data('color').toString())]);
+            $(".input-color-display").attr('class', 'input-color-display');
+            $(".input-color-display").addClass("input-color-display-"+$(this).data('color'));
+            setTimeout(function() { $('#edituserName').focus(); }, 100);
+            if($("#edituserName").val() != "") $('#edituserName').next().addClass('active');
+            $('#edituserColor').next().addClass('active');
+            $("#edituserSecurity").val($(this).data('security').toString());
+            $("#edituserSecurity").formSelect();
+            $("#edit-form-error").hide();
+            $("#userEditForm").modal('open');
+        });
+
+        $("#edituserColor, .input-color-display").click(function(){
+            $("#edit-form-error").hide();
+            $("#userEditColor").modal('open');
+        });
+
+        $(".color-pick-up").click(function(){
+            $(".input-color-display").attr('class', 'input-color-display');
+            $(".input-color-display").addClass("input-color-display-"+$(this).data('color'));
+            $("#edituserColor").val(color_labels[color_display.indexOf($(this).data('color').toString())]);
+            $("#userEditColor").modal('close');
+        });
+
+        $("#userCloseColorPickerBtn").click(function(){
+            $("#userEditColor").modal('close');
+        });
+
+        $("#userEditFormBtn").click(function(){
+
+            $("#edituserName").prop('disabled', true);
+            $("#edituserSecurity").prop('disabled', true);
+            $("#userEditFormBtn").prop('disabled', true);
+
+            if($("#edituserName").val() == "" || !checkAlphaNumeric($("#edituserName").val()) || hasWhiteSpace($("#edituserName").val())){
+                $("#edit-form-error").show();
+                $("#edit-form-error b").text("Invalid user name.");
+
+                $("#edituserName").prop('disabled', false);
+                $("#edituserSecurity").prop('disabled', false);
+                $("#userEditFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/users/edit", { code: $("#edituserCode").val(), name: $("#edituserName").val(), color: color_display[color_labels.indexOf($("#edituserColor").val())], security: ($("#edituserSecurity").parent().children('input').val() == "Disabled" ? "false" : "true") }, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.replace(getPathFromUrl());
+                    }else if(data.r == 1){
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text(data.t);
+
+                        $("#edituserName").prop('disabled', false);
+                        $("#edituserSecurity").prop('disabled', false);
+                        $("#userEditFormBtn").prop('disabled', false);
+                    }else{
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text('Communication error.');
+
+                        $("#edituserName").prop('disabled', false);
+                        $("#edituserSecurity").prop('disabled', false);
+                        $("#userEditFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#edit-form-error").show();
+                    $("#edit-form-error b").text('Communication error.');
+
+                    $("#edituserName").prop('disabled', false);
+                    $("#edituserSecurity").prop('disabled', false);
+                    $("#userEditFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $(".deleteuserBtn").click(function(){
+            $("#deleteuserCode").val($(this).data('code'));
+            $("#delete-form-error").hide();
+            $("#userDeleteForm").modal('open');
+        });
+
+        $("#userDeleteFormBtn").click(function(){
+
+            $("#userDeleteFormBtn").prop('disabled', true);
+
+            $.post( "/service/users/delete", { code: $("#deleteuserCode").val() }, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.replace(getPathFromUrl());
+                }else if(data.r == 1){
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text(data.t);
+
+                    $("#userDeleteFormBtn").prop('disabled', false);
+                }else{
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text('Communication error.');
+
+                    $("#userDeleteFormBtn").prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#delete-form-error").show();
+                $("#delete-form-error b").text('Communication error.');
+
+                $("#userDeleteFormBtn").prop('disabled', false);
+            });
+        });
+
+        function checkAlphaNumeric(data) {
+            var letters = /^[a-zA-Z0-9\s]+$/;
+            if (data.match(letters)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }

@@ -1,0 +1,165 @@
+.login-body {
+    background: #eeeeee;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    height: 100%;
+}
+
+.login-container {
+    position: relative;
+    width: 80%;
+    height: 550px;
+    margin-top: 55px;
+    -webkit-box-sizing: border-box !important;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box !important;
+    /* Firefox, other Gecko */
+    box-sizing: border-box !important;
+    /* Opera/IE 8+ */
+}
+
+.login-container-left {
+    height: 100%;
+    margin: 0;
+    padding: 0 !important;
+}
+
+.login-container-right {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-image: url(/images/background-login.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.login-card {
+    height: 100%;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    overflow: hidden;
+}
+
+.login-card .progress{
+    position: absolute;
+    width: 105%;
+    top: -8px;
+    left: -10px;
+}
+
+.login-card-header {
+    width: 100%;
+    height: 55px;
+    padding-top: 10px;
+}
+
+.login-card-header-left {
+    height: 55px;
+    text-align: left;
+}
+
+.login-card-header-right {
+    height: 55px;
+    text-align: right;
+}
+
+.login-back-btn {
+    margin-left: -20px;
+}
+
+.login-back-btn i {
+    color: #212121;
+}
+
+.login-register-btn {
+    color: #212121;
+    line-height: 3.9;
+    height: 100%;
+    text-transform: none !important;
+}
+
+.login-card-content {
+    padding: 50px 70px 70px 70px !important
+}
+
+@media only screen and (max-width: 480px) {
+    .login-card-content {
+        padding-left: 30px !important;
+        padding-right: 30px !important
+    }
+}
+
+.login-logo {
+    margin: auto;
+    display: block;
+}
+
+.login-title {
+    text-align: center;
+    font-weight: 700;
+}
+
+.login-input:not(.browser-default) {
+    background: #ededed !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    -webkit-box-sizing: border-box !important;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box !important;
+    /* Firefox, other Gecko */
+    box-sizing: border-box !important;
+    /* Opera/IE 8+ */
+    border-bottom: none !important;
+    outline: none !important;
+}
+
+.login-input:not(.browser-default):focus:not([readonly]) {
+    border-bottom: none !important;
+    -moz-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2) !important;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+.login-input::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #757575;
+    opacity: 1;
+    font-family: 'Montserrat', sans-serif;
+    /* Firefox */
+}
+
+.login-input:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #757575;
+}
+
+.login-input::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #757575;
+}
+
+.login-error{
+    width: 100%;
+    text-align: center;
+    height: 30px;
+    line-height: 2.25;
+    font-size: 14px;
+}
+
+.login-forgot-btn {
+    color: #212121;
+    line-height: 3.9;
+    height: 100%;
+    width: 100%;
+    text-transform: none !important;
+}
+
+.login-btn {
+    text-align: center;
+    width: 100%;
+    border-radius: 25px;
+    text-transform: none !important;
+}

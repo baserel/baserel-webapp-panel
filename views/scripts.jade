@@ -1,0 +1,696 @@
+extends layout
+
+block style
+    link(rel='stylesheet', href='/codemirror-5.48.2/lib/codemirror.css')
+    link(rel='stylesheet', href='/codemirror-5.48.2/theme/base16-dark.css')
+    link(rel='stylesheet', href='/codemirror-5.48.2/addon/fold/foldgutter.css')
+    script(src='/codemirror-5.48.2/lib/codemirror.js')
+    script(src='/codemirror-5.48.2/mode/javascript/javascript.js')
+    script(src='/codemirror-5.48.2/addon/selection/active-line.js')
+    script(src='/codemirror-5.48.2/addon/edit/matchbrackets.js')
+    script(src='/codemirror-5.48.2/addon/fold/foldcode.js')
+    script(src='/codemirror-5.48.2/addon/fold/foldgutter.js')
+    script(src='/codemirror-5.48.2/addon/fold/brace-fold.js')
+
+
+    style.
+
+        .codebox-head, .codebox-sub-head{
+            width: 100%;
+            height: 30px;
+            color: #bdbdbd;
+            background-color: #272727;
+            -webkit-user-select: none; /* Safari */        
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        .codebox-head p, .codebox-sub-head p{
+            margin: 0;
+            padding: 0;
+            padding-left: 10px;
+            font-size: 12px;
+        }
+        .codebox-body{
+            overflow: hidden;
+            height: 300px;
+        }
+        .codebox-body textarea{
+            height: 100%; 
+            border: none; 
+            padding: 10px 2px; 
+            margin: 0; 
+            color: #e0e0e0; 
+            font-size: 14px;
+            font-family: 'Fira Sans', sans-serif;
+        }
+        .codebox-sub-body{
+            overflow: hidden;
+            height: 135px;
+        }
+        .codebox-sub-body textarea{
+            height: 100%; 
+            border: none; 
+            padding: 10px 2px; 
+            margin: 0; 
+            color: #e0e0e0; 
+            font-size: 14px;
+            font-family: 'Fira Sans', sans-serif;
+        }
+        body{
+            background: #212121;
+        }
+        .top-bar{
+            color: #bdbdbd;
+            font-size: 13px;
+        }
+        .top-bar-left{
+            text-align: left;
+        }
+        .top-bar-left p{
+            
+        }
+        .top-bar-right{
+            text-align: right;
+        }
+        .scripts-project.scripts-project-active{
+            background-color: #01579b !important;
+        }
+        .scripts-script.scripts-script-active{
+            background-color: #01579b !important;
+        }
+
+block view-title
+    h3.panel-title Scripts
+
+block content
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Create and manage powerful scripts. Read the docs 
+            a(href="/docs/scripts") Here.
+    .row.top-bar(style="background-color: #1b1b1b; margin-bottom: 0;")
+            .col.s6.top-bar-left
+                if open_script_name != null
+                    a(href="#!", style="font-size: 14px; vertical-align: middle; line-height: 29px;")#script-project-name.no-margins #{open_project_name}
+                        .material-icons(style="vertical-align: middle; font-size: 20px;") chevron_right
+                        | #{open_script_name}
+                else
+                    a(href="#!", style="font-size: 14px; vertical-align: middle; line-height: 29px;")#script-project-name.no-margins Project
+                        .material-icons(style="vertical-align: middle; font-size: 20px;") chevron_right
+                        | Untitled
+            .col.s6.top-bar-right
+                p#status-message.no-margins
+    .row(style="background-color: #212121; margin-bottom: 0;")
+        .col.s12(style="position: relative; margin-top: 1rem; margin-bottom: 1rem;")
+            button#scripts_new_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#newModal")
+                i.material-icons.right insert_drive_file
+            button#scripts_open_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#openModal")
+                i.material-icons.right open_in_browser
+            button#scripts_save_btn.waves-effect.waves-light.btn-floating(style="line-height: 46px; background-color: #01579b; margin-right: 10px;")
+                i.material-icons.right save
+            button#scripts_delete_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#deleteModal")
+                i.material-icons.right delete
+            button#scripts_settings_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#settingsModal")
+                i.material-icons.right settings
+            button#scripts_history_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#historyModal")
+                i.material-icons.right history
+            button#scripts_lookup_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#lookupModal")
+                i.material-icons.right search
+            button#scripts_send_btn.waves-effect.waves-light.btn-floating(style="line-height: 46px; background-color: #01579b")
+                i.material-icons.right send
+    .row(style="padding: 0 0px; background-color: #212121; overflow: hidden; ")
+        .col.s6(style="background-color: #151515; padding: 0; border-right: 1px solid #212121")
+                .codebox-head.codebox-handler-left.z-depth-1
+                    p Script
+                .codebox-body
+                    .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
+                        textarea#scripts_code.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder='')
+                            | #{open_script_str}
+        .col.s6(style="background-color: #151515; padding: 0; border-left: 1px solid #212121")
+            .row.no-margins.no-paddings.codebox-handler-right
+                .codebox-sub-head.codebox-head-top.z-depth-1
+                    .col.s6
+                        p Request
+                    .col.s6(style="text-align: right; font-size: 12px; vertical-align: middle;")
+                        p#scripts_req_alert(style="color: #e53935;")
+                .codebox-sub-body
+                    .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
+                        textarea#scripts_req.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder='{}')
+                            | #{open_script_request}
+            .row.no-margins.no-paddings
+                .codebox-sub-head.codebox-head-bottom.z-depth-1
+                    .col.s6
+                        p Response
+                    .col.s6(style="text-align: right; font-size: 12px; vertical-align: middle;")
+                        p#scripts_res_time
+                .codebox-sub-body
+                    .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
+                        textarea#scripts_res.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder='{}')
+    #lookupModal.modal(style="width: 400px;")
+        .modal-content
+            h4 Lookup
+            .row
+                .input-field.col.s12
+                    input#scripts_user_fingerprint.validate(placeholder='Fingerprint', type='text', readonly="true")
+                    label(for='scripts_user_fingerprint') Fingerprint
+            .row
+                .input-field.col.s12
+                    input#scripts_api_address.validate(placeholder='API Address', type='text', readonly="true")
+                    label(for='scripts_api_address') API Address
+            .row
+                .col.s12
+                    label Tables
+                    ul#lookupTables.collection
+    #newModal.modal(style="width: 400px;")
+        .modal-content
+            h4 New
+            .row
+                .input-field.col.s12.console-input
+                    select#script_project
+                        option(value='', disabled='', selected='') Choose a project
+                        each project, code in projects
+                            option(value='#{code}') #{project.name}
+            .row
+                .input-field.col.s12
+                    input#script_name.validate(placeholder='Fingerprint', type='text', maxlength='20')
+                    label(for='script_name') Script name
+            .valign-wrapper
+                #new-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#scriptNewBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+    #openModal.modal(style="width: 80%;")
+        .modal-content.no-paddings(style="background-color: #212121")
+            h4(style="padding: 20px 20px; color: #bdbdbd").no-margins Open
+            .row(style="background-color:#bdbdbd").no-margins
+                .col.s6(style="padding: 20px 20px; border-right: 3px solid #212121; height: 290px;")
+                    h6(style="margin-bottom: 14px; margin-top: 0; color: #212121;") Projects
+                    .row
+                        each project, code in projects
+                            .col.s6
+                                if(code == open_project_code)
+                                    button.scripts-project.scripts-project-active.waves-effect.waves-light.btn(data-code="#{code}",style="background-color: #424242; color: #e0e0e0; margin-bottom: 20px; width: 100%; text-align: left;")
+                                        i.material-icons.left folder
+                                        | #{project.name}
+                                else
+                                    button.scripts-project.waves-effect.waves-light.btn(data-code="#{code}",style="background-color: #424242; color: #e0e0e0; margin-bottom: 20px; width: 100%; text-align: left;")
+                                        i.material-icons.left folder
+                                        | #{project.name}
+                .col.s6(style="padding: 20px 20px; height: 290px;")
+                    h6(style="margin-bottom: 14px; margin-top: 0; color: #212121;") Scripts
+                    .row.scripts-list
+    #tablesModal.modal(style="width: 60%")
+        .modal-content
+            h4 Import tables
+            .row
+                .input-field.col.s5.scripts-table-input
+                    select#scripts_table_input
+                        option(value='', disabled='', selected='') Choose a table
+                .input-field.col.s6.scripts-table-name-input
+                    input#script_name.validate(placeholder='Fingerprint', type='text', maxlength='20')
+                    label(for='script_name') Script name
+                .col.s1
+                    button#scripts_table_add_btn.waves-effect.waves-light.btn-floating(style="line-height: 46px; background-color: #01579b; margin-right: 10px; margin-top: 22px;", href="#!")
+                        i.material-icons.right add
+            .row
+                h6 Imported
+            .row.scripts-tables-list
+                .col.s4
+                    button.scripts-sctipt.waves-effect.waves-light.btn(data-code="aaaasd",style="background-color: #01579b; color: #e0e0e0; margin-bottom: 20px; width: 100%; text-align: left;")
+                        i.material-icons.right cancel
+                        | Example
+    #deleteModal.modal(style="width: 400px;")
+        .modal-content
+            h4 Delete
+            b Are you sure you want to delete permanently this script? 
+            .valign-wrapper
+                #delete-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#scriptDeleteBtn.waves-effect.waves-light.btn.red(style="margin-left: 10px;")
+                i.material-icons.right delete
+                | Delete
+    #settingsModal.modal(style="width: 400px;")
+        .modal-content
+            h4 Settings
+            .valign-wrapper
+                #settings-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#scriptSettingsSaveBtn.waves-effect.waves-light.btn.green(style="margin-left: 10px;")
+                i.material-icons.right save
+                | Save
+    #historyModal.modal(style="width: 400px;")
+        .modal-content
+            h4 History
+
+
+
+block scripts_bottom
+    script.
+
+        var editor_code = CodeMirror.fromTextArea(document.getElementById("scripts_code"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,
+            theme: 'base16-dark'
+        });
+        var editor_req = CodeMirror.fromTextArea(document.getElementById("scripts_req"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,
+            theme: 'base16-dark'
+        });
+        var editor_res = CodeMirror.fromTextArea(document.getElementById("scripts_res"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,
+            theme: 'base16-dark'
+        });
+
+        var url = window.location.href;
+
+        var urlp = url.split('/');
+        var urli = urlp[2].split('.');
+        var urld = urli[0].slice(0,3)+(Number(urli[0].slice(3,urli[0].Length))+10000);
+
+        var instancePath = urlp[0]+'//'+urld+'.'+urli[1]+'.'+urli[2]+'/';
+
+        var tables = {};
+        var currentProject = "#{open_project_code}";
+        var currentScript;
+        
+        var open_script_code = "#{open_script_code}";
+        var open_project_code = "#{open_project_code}";
+        var open_script_str = "";
+
+        var con = true;
+        var changes = false;
+
+        $(document).ready(function(){
+
+            $('#scripts_table').prop('disabled', 'true');
+            $('select').formSelect();
+            $('.modal').modal();
+
+            $('#scripts_user_fingerprint').val("#{fingerprint}");
+
+            editor_res.setValue('{}');
+
+            if(open_script_code == null || open_script_code == ""){
+                $('#scripts_lookup_btn').prop('disabled', 'true');
+                $('#scripts_send_btn').prop('disabled', 'true');
+                $('#scripts_save_btn').prop('disabled', 'true');
+                $('#scripts_delete_btn').prop('disabled', 'true');
+                $('#scripts_history_btn').prop('disabled', 'true');
+                $('#scripts_settings_btn').prop('disabled', 'true');
+                $('#scripts_code').prop('disabled', 'true');
+                $('#scripts_res').prop('disabled', 'true');
+            }
+
+        });
+
+        var codeboxExpandedLevel = 1;
+        var codeboxTopExpanded = false;
+        var codeboxBottomExpanded = false;
+        
+
+        $(".codebox-handler-left").bind("dblclick", function(){
+            if(codeboxExpandedLevel == 3){
+                $(".codebox-handler-right").parent().removeClass('s9 s6 s3').addClass('s6');
+                $(".codebox-handler-left").parent().removeClass('s9 s6 s3').addClass('s6');
+                codeboxExpandedLevel = 1;
+            }else if(codeboxExpandedLevel == 1){
+                $(".codebox-handler-right").parent().removeClass('s9 s6 s3').addClass('s3');
+                $(".codebox-handler-left").parent().removeClass('s9 s6 s3').addClass('s9');
+                codeboxExpandedLevel = 3;
+            }else if(codeboxExpandedLevel == 2){
+                $(".codebox-handler-right").parent().removeClass('s9 s6 s3').addClass('s9');
+                $(".codebox-handler-left").parent().removeClass('s9 s6 s3').addClass('s3');
+                codeboxExpandedLevel = 3;
+            }
+        });
+
+        /*$(".codebox-handler-right").bind("dblclick", function(){
+            if(codeboxRightExpanded){
+                $(".codebox-handler-right").parent().removeClass('s9 s6 s3').addClass('s6');
+                $(".codebox-handler-left").parent().removeClass('s9 s6 s3').addClass('s6');
+                codeboxRightExpanded = false;
+                codeboxLeftExpanded = false;
+            }else{
+                $(".codebox-handler-right").parent().removeClass('s9 s6 s3').addClass('s9');
+                $(".codebox-handler-left").parent().removeClass('s9 s6 s3').addClass('s3');
+                codeboxRightExpanded = true;
+                codeboxLeftExpanded = false;
+            }
+        });*/
+
+        $(".codebox-head-top").bind("dblclick", function(){
+            if(codeboxTopExpanded){
+                $(".codebox-head-top").nextAll().first().css('height', '135px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '135px');
+                codeboxTopExpanded = false;
+                codeboxBottomExpanded = false;
+            }else{
+                $(".codebox-head-top").nextAll().first().css('height', '270px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '0px');
+                codeboxTopExpanded = true;
+                codeboxBottomExpanded = false;
+            }
+        });
+        $(".codebox-head-bottom").bind("dblclick", function(){
+            if(codeboxBottomExpanded){
+                $(".codebox-head-top").nextAll().first().css('height', '135px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '135px');
+                codeboxTopExpanded = false;
+                codeboxBottomExpanded = false;
+            }else{
+                $(".codebox-head-top").nextAll().first().css('height', '0px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '270px');
+                codeboxTopExpanded = false;
+                codeboxBottomExpanded = true;
+            }
+        });
+
+        $("#script-project-name").click(function(){
+
+            updateProjectScripts(open_project_code);
+
+            $("#openModal").modal('open');
+        });
+
+        $(".scripts-project").click(function(){
+
+            updateProjectScripts($(this).data('code'));
+
+            $(".scripts-project").removeClass('scripts-project-active');
+
+            $(this).addClass('scripts-project-active');
+
+        });
+        
+        $('body').on('click', '.scripts-script', function() {
+            if(!$(this).hasClass("scripts-script-active")){
+                $.post( "/service/scripts/set/"+currentProject+"/"+$(this).data('code'), function( data ) {
+
+                    if(data.r == 1){
+                        window.location.replace(url);
+                    }
+
+                });
+            }
+
+        });
+
+        $('#scripts_save_btn').click(function(){
+            saveScript();
+        });
+
+        $("#scripts_open_btn").click(function(){
+            updateProjectScripts(currentProject);
+        });
+
+        function updateProjectScripts(project){
+
+            currentProject = project;
+
+            $('.scripts-list').html('');
+
+            $.post( "/service/scripts/get/"+project, function( data ) {
+
+                for (var key in data){
+
+                    if(key == open_script_code) scriptActive = "scripts-script-active";
+                    else scriptActive = "";
+
+                    $('.scripts-list').append('<div class="col s6"><button data-code="'+key+'" style="background-color: #424242; color: #e0e0e0; margin-bottom: 20px; width: 100%; text-align: left;" class="scripts-script '+scriptActive+' waves-effect waves-light btn"><i class="material-icons left">description</i>'+data[key]+'</button></div>');
+                }
+                
+            });
+        }
+
+        function saveScript(){
+
+            $('#status-message').text('Saving script...');
+
+            var s_data = {script:editor_code.getValue(), request: editor_req.getValue()};
+
+            $.post( "/service/scripts/save/"+open_project_code+"/"+open_script_code, s_data, function( data ) {
+
+                if(data.r == 1){
+                    $('#status-message').text('Script saved');
+                    changes = false;
+                    con = true;
+                }else{
+                    $('#status-message').text('Communication error');
+                    con = false;
+                }
+                
+            })
+            .fail(function() {
+                $('#status-message').text('Communication error, try again');
+                    con = false;
+            });
+        }
+
+        window.setInterval(function(){
+            if(con && changes && open_script_code != "") saveScript();
+        }, 3000);
+
+        editor_code.on('change',function(cMirror){
+            changes = true;
+        });
+
+        editor_req.on('change',function(cMirror){
+            $("#scripts_req_alert").text('');
+        });
+
+        $("#scripts_new_btn").click(function(){
+            $("#new-form-error").hide();
+        });
+
+        $("#script_name, #script_project").click(function(){
+            $("#new-form-error").hide();
+        });
+
+        $('#script_name').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#scriptNewBtn').click();
+            }
+        });
+        $("#scriptNewBtn").click(function(){
+
+            $("#script_project").prop('disabled', true);
+            $("#script_name").prop('disabled', true);
+            $("#scriptNewBtn").prop('disabled', true);
+
+            if($("#script_name").val() == "" || !checkAlphaNumeric($("#script_name").val()) || hasWhiteSpace($("#script_name").val())){
+                $("#new-form-error").show();
+                $("#new-form-error b").text("Invalid script name.");
+
+                $("#script_project").prop('disabled', false);
+                $("#script_name").prop('disabled', false);
+                $("#scriptNewBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/scripts/add", { name: $("#script_name").val(), project: $("#script_project").val()}, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.replace(url);
+                    }else if(data.r == 1){
+                        $("#new-form-error").show();
+                        $("#new-form-error b").text(data.t);
+
+                        $("#script_project").prop('disabled', false);
+                        $("#script_name").prop('disabled', false);
+                        $("#scriptNewBtn").prop('disabled', false);
+                    }else{
+                        $("#new-form-error").show();
+                        $("#new-form-error b").text('Communication error.');
+
+                        $("#script_project").prop('disabled', false);
+                        $("#script_name").prop('disabled', false);
+                        $("#scriptNewBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#new-form-error").show();
+                    $("#new-form-error b").text('Communication error.');
+
+                    $("#script_project").prop('disabled', false);
+                    $("#script_name").prop('disabled', false);
+                    $("#scriptNewBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $('#scripts_delete_btn').click(function(){
+            $("#delete-form-error").hide();
+        });
+
+        $("#scriptDeleteBtn").click(function(){
+            $("#delete-form-error").hide();
+            $.post( "/service/scripts/delete/"+open_project_code+"/"+open_script_code, function( data ) {
+                if(data.r == 1){
+                    window.location.replace(url);
+                }else{
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text("Communication error");
+                }
+            }).fail(function(){
+                $("#delete-form-error").show();
+                $("#delete-form-error b").text("Communication error");
+            });
+        })
+
+        $("#scripts_lookup_btn").click(function(){
+            set_lookup();
+        });
+
+        $("#scripts_send_btn").click(function(){
+
+            $('#status-message').text('Saving script...');
+            $("#scripts_res_time").text('');
+
+            var s_data = {script:editor_code.getValue(), request: editor_req.getValue()};
+
+            $.post( "/service/scripts/save/"+open_project_code+"/"+open_script_code, s_data, function( data ) {
+
+                if(data.r == 1){
+                    $('#status-message').text('Script saved');
+                    changes = false;
+                    con = true;
+                    
+                    ///////////////////////////
+
+                    editor_res.setValue('');
+
+                    var start_ms = new Date().getTime();
+                    var req_error = false;
+                    var req_json = "{}";
+
+                    try{
+                        req_json = JSON.parse((editor_req.getValue() == "" ? "{}" : editor_req.getValue()));
+                    }catch(e){
+                        req_error = true;
+                    }
+
+                    if(!req_error){
+                        $.post( "/service/scripts/run/"+open_project_code+"/"+open_script_code, req_json, function( data ) {
+                            editor_res.setValue(data);
+                            $("#scripts_res_time").text((new Date().getTime()-start_ms)+" ms");
+                        });
+                    }else{
+                        $("#scripts_req_alert").text('JSON sintax error');
+                    }
+
+                }else{
+                    $('#status-message').text('Communication error');
+                    con = false;
+                }
+                
+            });
+
+        });
+        function setSelectionRange(input, selectionStart, selectionEnd) {
+            if (input.setSelectionRange) {
+                input.focus();
+                input.setSelectionRange(selectionStart, selectionEnd);
+            }
+            else if (input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', selectionEnd);
+                range.moveStart('character', selectionStart);
+                range.select();
+            }
+        }
+
+        function replaceSelection (input, replaceString) {
+            if (input.setSelectionRange) {
+                var selectionStart = input.selectionStart;
+                var selectionEnd = input.selectionEnd;
+                input.value = input.value.substring(0, selectionStart)+ replaceString + input.value.substring(selectionEnd);
+
+                if (selectionStart != selectionEnd){ 
+                    setSelectionRange(input, selectionStart, selectionStart + 	replaceString.length);
+                }else{
+                    setSelectionRange(input, selectionStart + replaceString.length, selectionStart + replaceString.length);
+                }
+
+            }else if (document.selection) {
+                var range = document.selection.createRange();
+
+                if (range.parentElement() == input) {
+                    var isCollapsed = range.text == '';
+                    range.text = replaceString;
+
+                    if (!isCollapsed)  {
+                        range.moveStart('character', -replaceString.length);
+                        range.select();
+                    }
+                }
+            }
+        }
+
+
+        // We are going to catch the TAB key so that we can use it, Hooray!
+        function catchTab(item,e){
+            if(navigator.userAgent.match("Gecko")){
+                c=e.which;
+            }else{
+                c=e.keyCode;
+            }
+            if(c==9){
+                replaceSelection(item,String.fromCharCode(9));
+                setTimeout("document.getElementById('"+item.id+"').focus();",0);	
+                return false;
+            }
+
+        }
+
+        function checkAlphaNumeric(data) {
+            var letters = /^[a-zA-Z0-9\s]+$/;
+            if (data.match(letters)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }
+
+        function set_lookup(){
+            $("#scripts_api_address").val(instancePath.replace("locNaN.undefined.undefined", "localhost:8000")+"cmd/"+open_project_code+'/'+open_script_code);
+
+            $('#lookupTables').html('');
+
+            $.post( "/service/console/tables/"+open_project_code, function( data ) {
+
+                for (var i in data){
+                    $('#lookupTables').append($('<li class="collection-item">'+data[i]['name']+'</li>'));
+                }
+
+            });
+        }
+
+        function get_api_address(){
+            return instancePath+$('#scripts_action').val()+"/"+$('#scripts_project').val()+'/'+$('#scripts_table').val();
+        }

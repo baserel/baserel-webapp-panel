@@ -1,0 +1,62 @@
+extends layout
+
+block view-title
+    h3.panel-title Documentation
+
+block content
+    .row(style="padding: 0 10px; margin-bottom: 30px;")
+        h3.panel-sub-title Everything you need to know to get started with your Baserel Instance.
+    .row(style="padding: 0 10px;")
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/introduction").panel-project-link
+                    .card.center(class="panel-project-color-01579b", style="height: 150px")
+                        h3.panel-project-title Introduction
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            Basic concepts about how a Baserel Instance works.
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/projects-and-tables").panel-project-link
+                    .card.center(class="panel-project-color-e65100", style="height: 150px")
+                        h3.panel-project-title Projects and tables
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            Managing projects and tables in a Baserel Instance.
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/api").panel-project-link
+                    .card.center(class="panel-project-color-b71c1c", style="height: 150px")
+                        h3.panel-project-title Using the API
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            How to connect your Apps and Games with Baserel.
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/users").panel-project-link
+                    .card.center(class="panel-project-color-827717", style="height: 150px")
+                        h3.panel-project-title Users
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            Managing you instance Users.
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/settings").panel-project-link
+                    .card.center(class="panel-project-color-880e4f", style="height: 150px")
+                        h3.panel-project-title Settings
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            Exploring your instance's Settings.
+        .col.s4.panel-project-col
+            .card.center(style="background-color: #fafafa;")
+                a(href="/docs/faqs").panel-project-link
+                    .card.center(class="panel-project-color-004d40", style="height: 150px")
+                        h3.panel-project-title FAQs
+                        p(style="color:#FFFFFF90; padding: 0 30px;").
+                            Frequently asked questions.
+
+
+block scripts_bottom
+    script.
+        $(function(){
+            jQuery('.panel-project-link .card').each(function(index) {
+                jQuery(this).delay(100*index).animate({ opacity: 1 }, 0,function(){
+                    jQuery(this).addClass('start');
+                });
+            });
+        });

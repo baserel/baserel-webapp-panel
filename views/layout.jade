@@ -1,0 +1,99 @@
+doctype html
+html
+  head
+    title= title
+    // CSS
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    link(href='https://fonts.googleapis.com/css?family=Fira+Sans&display=swap', rel='stylesheet')
+    link(href='/css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='/css/style.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='/css/panel.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css", rel="stylesheet")
+    block style
+    block scripts_top
+  body
+    .panel-container
+      .panel-sidenav.hide-on-med-and-down
+        ul.no-margins
+          a(href='/').panel-animate-btn
+            li.panel-sidenav-li
+              img(src='/images/icon-white.png', height='50px')
+          a.panel-sidenav-btn.active(href='/projects').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons folder
+              .panel-sidenav-btn-label Projects
+          a.panel-sidenav-btn.active(href='/users').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons person
+              .panel-sidenav-btn-label Users
+          a.panel-sidenav-btn.active(href='/docs').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons book
+              .panel-sidenav-btn-label Docs
+          a.panel-sidenav-btn.active(href='/console').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons storage
+              .panel-sidenav-btn-label Console
+          a.panel-sidenav-btn.active(href='/scripts').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons description
+              .panel-sidenav-btn-label Scripts
+          a.panel-sidenav-btn.active(href='/settings').panel-animate-btn
+            li.panel-sidenav-li
+              i.material-icons settings
+              .panel-sidenav-btn-label Settings
+      .panel-navbar
+        nav.no-shadows(role='navigation')
+          .nav-wrapper
+            a.sidenav-trigger.panel-mobile-menu-btn(href='#', data-target='slide-out')
+              i.material-icons menu
+            
+            block view-title
+            
+            ul#nav-mobile.right.hide-on-med-and-down.panel-navbar-ul
+              li
+                a.dropdown-trigger(href='#!', data-target='profile-options') Master Developer
+            ul#profile-options.dropdown-content.panel-navbar-profile-options
+              li
+                a(href='#!')
+                  i.material-icons person_outline
+                  | Profile
+              li
+                a(href='#!')
+                  i.material-icons settings_outline
+                  | Settings
+              li
+                a(href='/signout')
+                  i.material-icons keyboard_tab
+                  | Sign out
+
+      ul#slide-out.sidenav
+        li
+          .user-view
+            .background
+              img(src='/images/office.jpg')
+            a(href='#user')
+              img.circle(src='/images/yuna.jpg')
+            a(href='#name')
+              span.white-text.name John Doe
+            a(href='#email')
+              span.white-text.email jdandturk@gmail.com
+        li
+          a(href='#!')
+            i.material-icons cloud
+            | First Link With Icon
+        li
+          a(href='#!') Second Link
+        li
+          .divider
+        li
+          a.subheader Subheader
+        li
+          a.waves-effect(href='#!') Third Link With Waves
+      .panel-content
+        block content
+// Scripts
+script(src='https://code.jquery.com/jquery-2.1.1.min.js')
+script(src='/js/materialize.js')
+script(src='/js/init.js')
+block scripts_bottom

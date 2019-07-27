@@ -1,0 +1,105 @@
+doctype html
+head
+  meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  title #{lang[3]}
+  // CSS
+  link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+  link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+  link(href='/css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
+  link(href='/css/style.css', type='text/css', rel='stylesheet', media='screen,projection')
+  link(href='/css/login.css', type='text/css', rel='stylesheet', media='screen,projection')
+body.login-body
+    .row.login-container.z-depth-5
+        .col.l6.m12.login-container-left
+            .card.white.darken-1.login-card.no-shadows
+                #progress.progress
+                        .indeterminate
+                .login-card-header
+                    .col.s6.login-card-header-left
+                        a.btn-large.btn.white.login-back-btn.no-shadows.transparent(href='http://baserel.com')
+                            i.material-icons arrow_back
+                    .col.s6.login-card-header-right
+                        a.btn.white.login-register-btn.no-shadows.transparent(href='register') Register
+                .card-content.login-card-content
+                    img.login-logo(src='/images/icon.png', height='75px')
+                    img.login-logo(src='/images/logo.png', height='50px')
+                    span.card-title.center Sign in
+                    br
+                    form(action="#", method="post")
+                        .row.no-bottom-margin
+                            .col.s12
+                                input#email.validate.z-depth-2.login-input(name='email', type='text', placeholder='Email')
+                            .col.s12
+                                input#password.validate.z-depth-2.login-input(name='password', type='password', placeholder='Password')
+                        .valign-wrapper
+                            #error.card.red.login-error
+                                b Error
+                        .valign-wrapper
+                            a.btn.white.login-forgot-btn.no-shadows.transparent Forgot your password?
+                        .valign-wrapper
+                            button(type="button")#submit.waves-effect.waves-light.btn.login-btn Login
+        .col.l6.login-container-right.hide-on-med-and-down
+
+// Scripts
+script(src='https://code.jquery.com/jquery-2.1.1.min.js')
+script(src='/js/materialize.js')
+script(src='/js/init.js')
+script.
+    $(function(){
+       $('#progress').hide(); 
+       $('#error').hide(); 
+       setTimeout(function() { $('#email').focus(); }, 100);
+    });
+    $('#email, #password').keypress(function(e) {
+        if(e.which == 13) { // Checks for the enter key
+            e.preventDefault(); // Stops IE from triggering the button to be clicked
+            $('#submit').click();
+        }
+    });
+    $('#email').click(function(){
+        $('#error').hide();
+    });
+    $('#password').click(function(){
+        $('#error').hide();
+    });
+    $('#submit').click(function(){
+
+        $(this).prop('disabled', true);
+        $('#progress').show();
+        $("#email").prop('disabled', true);
+        $("#password").prop('disabled', true);
+        $('#error').hide(); 
+
+        $.post( "/service/signin", { u: $("#email").val(), p: $("#password").val()}, "json")
+        .done(function( data ) {
+            if(data.r == 0){
+                window.location.replace("/dashboard");
+            }else if(data.r == 1){
+                $('#error').show(); 
+                $('#error b').text(data.t);
+
+                $('#submit').prop('disabled', false);
+                $('#progress').hide();
+                $("#email").prop('disabled', false);
+                $("#password").prop('disabled', false);
+            }else{
+                $('#error').show(); 
+                $('#error b').text('Communication error.');
+
+                $('#submit').prop('disabled', false);
+                $('#progress').hide();
+                $("#email").prop('disabled', false);
+                $("#password").prop('disabled', false);
+            }
+        })
+        .fail(function() {
+            $('#error').show(); 
+            $('#error b').text('Communication error.');
+
+            $('#submit').prop('disabled', false);
+            $('#progress').hide();
+            $("#email").prop('disabled', false);
+            $("#password").prop('disabled', false);
+        });
+    });

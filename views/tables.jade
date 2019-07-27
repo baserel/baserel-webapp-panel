@@ -1,0 +1,353 @@
+extends layout
+
+block view-title
+    h3.panel-title 
+        a(href="/projects") #{project.name}
+        .material-icons chevron_right
+        | Tables
+
+block content
+    .row
+        .col.s12.panel-content-table-container
+            .card
+                .card-image
+                    button#newTableBtn(href="#tableAddForm").btn-floating.halfway-fab.waves-effect.waves-light.btn-large.panel-add-btn.modal-trigger
+                        i.material-icons add
+                .card-content
+                    if e
+                        p#error.text-center
+                            =t
+                    else
+                        table#table
+                            thead
+                                tr
+                                    th Name
+                                    th Records
+                                    th(style="width: 140px") Actions
+                            tbody
+                                each table, code in tables
+                                    tr
+                                        td
+                                            a(href="/projects/#{project.code}/#{code}")
+                                                | #{table.name}
+                                        td= table.records_count
+                                        td
+                                            a.editTableBtn(data-code="#{code}", data-name="#{table.name}").btn-floating
+                                                i.material-icons edit
+                                            a.linkTableBtn(data-link="#{project.code}/#{code}", style="margin-left: 5px;").btn-floating.blue
+                                                i.material-icons insert_link
+                                            a.deleteTableBtn(data-code="#{code}", style="margin-left: 5px;").btn-floating.red
+                                                i.material-icons delete
+                        if project.tables_count == 0
+                            p(style="font-size: 14px; margin-top: 10px;") Nothing to show yet.
+                                            
+    // Modal Structure
+    #tableAddForm.modal(style="width: 30%;")
+        .modal-content
+            h5 Add
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#tableName(type='text', maxlenth=20)
+                            label(for='tableName') Table label
+            .valign-wrapper
+                #add-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#tableAddFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Add
+
+    // Modal Structure
+    #tableEditForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Edit
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editTableCode(type='text', maxlenth=64, hidden="hidden")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editTableName(type='text', maxlenth=20)
+                            label(for='editTableName') table label
+
+            .valign-wrapper
+                #edit-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#tableEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+
+    #tableLinkForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Endpoints
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s9(style="margin-bottom: 0")
+                            input#linkPutTableName(type='text', maxlenth=50, readonly='readonly')
+                            label(for='linkPutTableName') Put
+                        .col.s3
+                            a.copyLink(data-input="#linkPutTableName", style="margin-left: 5px; margin-top: 20px;").btn-floating.blue
+                                i.material-icons insert_link
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s9(style="margin-bottom: 0")
+                            input#linkGetTableName(type='text', maxlenth=50, readonly='readonly')
+                            label(for='linkGetTableName') Get
+                        .col.s3
+                            a.copyLink(data-input="#linkGetTableName", style="margin-left: 5px; margin-top: 20px;").btn-floating.blue
+                                i.material-icons insert_link
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s9(style="margin-bottom: 0")
+                            input#linkDelTableName(type='text', maxlenth=50, readonly='readonly')
+                            label(for='linkDelTableName') Del
+                        .col.s3
+                            a.copyLink(data-input="#linkDelTableName", style="margin-left: 5px; margin-top: 20px;").btn-floating.blue
+                                i.material-icons insert_link
+
+        .modal-footer
+            button#tableLinkFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right done
+                | Done
+
+    #tableEditForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Edit
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editTableCode(type='text', maxlenth=64, hidden="hidden")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#editTableName(type='text', maxlenth=20)
+                            label(for='editTableName') Table name
+
+            .valign-wrapper
+                #edit-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#tableEditFormBtn.waves-effect.waves-light.btn
+                i.material-icons.right save
+                | Save
+
+    // Modal Structure
+    #tableDeleteForm.modal(style="width: 30%; overflow-y: visible;")
+        .modal-content
+            h5 Delete
+            p.
+                Are you sure you want to delete permanently this table?
+            .row(style="margin-bottom: 0")
+                form.col.s12
+                    .row(style="margin-bottom: 0")
+                        .input-field.col.s12(style="margin-bottom: 0")
+                            input#deleteTableCode(type='text', maxlenth=64, hidden="hidden")
+            .valign-wrapper
+                #delete-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
+                    b Error
+
+        .modal-footer
+            button#tableDeleteFormBtn.waves-effect.waves-light.btn.red
+                i.material-icons.right delete
+                | Delete
+
+block scripts_bottom
+    script.
+    
+        var projectCode = "#{project.code}";
+
+        var url = window.location.href;
+
+        var urlp = url.split('/');
+        var urli = urlp[2].split('.');
+        var urld = urli[0].slice(0,3)+(Number(urli[0].slice(3,urli[0].Length))+10000);
+
+        var instancePath = urlp[0]+'//'+urld+'.'+urli[1]+'.'+urli[2]+'/';
+
+        $(document).ready(function(){
+            $('.modal').modal();
+            $('select').formSelect();
+        });
+        $(".copyLink").click(function(){
+            $($(this).data("input")).select();
+            document.execCommand("copy");
+        });
+        $("#newTableBtn").click(function(){
+            $('#tableName').val('');
+            setTimeout(function() { $('#tableName').focus(); }, 100);
+            $('#tableName').next().removeClass('active');
+            $("#add-form-error").hide();
+        });
+        $("#tableName").click(function(){
+            $("#add-form-error").hide();
+        });
+
+        $('#tableName').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#tableAddFormBtn').click();
+            }
+        });
+        $("#tableAddFormBtn").click(function(){
+
+            $("#tableName").prop('disabled', true);
+            $("#tableAddFormBtn").prop('disabled', true);
+
+            if($("#tableName").val() == "" || !checkAlphaNumeric($("#tableName").val()) || hasWhiteSpace($("#tableName").val())){
+                $("#add-form-error").show();
+                $("#add-form-error b").text("Invalid table name.");
+
+                $("#tableName").prop('disabled', false);
+                $("#tableAddFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/tables/add", { name: $("#tableName").val(), project: projectCode}, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.reload();
+                    }else if(data.r == 1){
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text(data.t);
+
+                        $("#tableName").prop('disabled', false);
+                        $("#tableAddFormBtn").prop('disabled', false);
+                    }else{
+                        $("#add-form-error").show();
+                        $("#add-form-error b").text('Communication error.');
+
+                        $("#tableName").prop('disabled', false);
+                        $("#tableAddFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#add-form-error").show();
+                    $("#add-form-error b").text('Communication error.');
+
+                    $("#tableName").prop('disabled', false);
+                    $("#tableAddFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $(".editTableBtn").click(function(){
+            $("#editTableCode").val($(this).data('code'));
+            $("#editTableName").val($(this).data('name'));
+            setTimeout(function() { $('#editTableName').focus(); }, 100);
+            if($("#editTableName").val() != "") $('#editTableName').next().addClass('active');
+            $("#edit-form-error").hide();
+            $("#tableEditForm").modal('open');
+        });
+
+        $('#editTableName').keypress(function(e) {
+            if(e.which == 13) { // Checks for the enter key
+                e.preventDefault(); // Stops IE from triggering the button to be clicked
+                $('#tableEditFormBtn').click();
+            }
+        });
+
+        $("#editTableName").click(function(){
+            $("#edit-form-error").hide();
+        });
+
+        $("#tableEditFormBtn").click(function(){
+
+            $("#editTableName").prop('disabled', true);
+            $("#tableEditFormBtn").prop('disabled', true);
+
+            if($("#editTableName").val() == "" || !checkAlphaNumeric($("#editTableName").val()) || hasWhiteSpace($("#editTableName").val())){
+                $("#edit-form-error").show();
+                $("#edit-form-error b").text("Invalid table name.");
+
+                $("#editTableName").prop('disabled', false);
+                $("#tableEditFormBtn").prop('disabled', false);
+            }else{
+                $.post( "/service/tables/edit", { code: $("#editTableCode").val(), name: $("#editTableName").val(), project: projectCode }, "json")
+                .done(function( data ) {
+                    if(data.r == 0){
+                        window.location.reload();
+                    }else if(data.r == 1){
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text(data.t);
+
+                        $("#editTableName").prop('disabled', false);
+                        $("#tableEditFormBtn").prop('disabled', false);
+                    }else{
+                        $("#edit-form-error").show();
+                        $("#edit-form-error b").text('Communication error.');
+
+                        $("#editTableName").prop('disabled', false);
+                        $("#tableEditFormBtn").prop('disabled', false);
+                    }
+                })
+                .fail(function() {
+                    $("#edit-form-error").show();
+                    $("#edit-form-error b").text('Communication error.');
+
+                    $("#editTableName").prop('disabled', false);
+                    $("#tableEditFormBtn").prop('disabled', false);
+                });
+            }
+        });
+
+        $(".deleteTableBtn").click(function(){
+            $("#deleteTableCode").val($(this).data('code'));
+            $("#delete-form-error").hide();
+            $("#tableDeleteForm").modal('open');
+        });
+
+        $("#tableDeleteFormBtn").click(function(){
+
+            $("#tableDeleteFormBtn").prop('disabled', true);
+
+            $.post( "/service/tables/delete", { code: $("#deleteTableCode").val(), project: projectCode }, "json")
+            .done(function( data ) {
+                if(data.r == 0){
+                    window.location.reload();
+                }else if(data.r == 1){
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text(data.t);
+
+                    $("#tableDeleteFormBtn").prop('disabled', false);
+                }else{
+                    $("#delete-form-error").show();
+                    $("#delete-form-error b").text('Communication error.');
+
+                    $("#tableDeleteFormBtn").prop('disabled', false);
+                }
+            })
+            .fail(function() {
+                $("#delete-form-error").show();
+                $("#delete-form-error b").text('Communication error.');
+
+                $("#tableDeleteFormBtn").prop('disabled', false);
+            });
+        });
+
+        $(".linkTableBtn").click(function(){
+            $("#linkPutTableName").val(instancePath+"put/"+$(this).data('link'));
+            $('#linkPutTableName').next().addClass('active');
+            $("#linkGetTableName").val(instancePath+"get/"+$(this).data('link'));
+            $('#linkGetTableName').next().addClass('active');
+            $("#linkDelTableName").val(instancePath+"del/"+$(this).data('link'));
+            $('#linkDelTableName').next().addClass('active');
+            $("#tableLinkForm").modal('open');
+        });
+
+        $("#tableLinkFormBtn").click(function(){
+            $("#tableLinkForm").modal('close');
+        });
+
+        function checkAlphaNumeric(data) {
+            var letters = /^[a-zA-Z0-9\s]+$/;
+            if (data.match(letters)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function hasWhiteSpace(s) {
+            return s.indexOf(' ') >= 0;
+        }
