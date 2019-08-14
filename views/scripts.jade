@@ -33,7 +33,7 @@ block style
         }
         .codebox-body{
             overflow: hidden;
-            height: 300px;
+            height: 400px;
         }
         .codebox-body textarea{
             height: 100%; 
@@ -46,7 +46,7 @@ block style
         }
         .codebox-sub-body{
             overflow: hidden;
-            height: 135px;
+            height: 185px;
         }
         .codebox-sub-body textarea{
             height: 100%; 
@@ -171,7 +171,7 @@ block content
                             option(value='#{code}') #{project.name}
             .row
                 .input-field.col.s12
-                    input#script_name.validate(placeholder='Fingerprint', type='text', maxlength='20')
+                    input#script_name.validate(placeholder='Script name', type='text', maxlength='20')
                     label(for='script_name') Script name
             .valign-wrapper
                 #new-form-error.card.red.form-error(style="width: 100%;text-align: center;min-height: 30px;line-height: 2.25;font-size: 14px;")
@@ -263,6 +263,9 @@ block scripts_bottom
             matchBrackets: true,
             theme: 'base16-dark'
         });
+
+        editor_code.setSize("100%","400px");
+
         var editor_req = CodeMirror.fromTextArea(document.getElementById("scripts_req"), {
             lineNumbers: true,
             lineWrapping: true,
@@ -273,6 +276,9 @@ block scripts_bottom
             matchBrackets: true,
             theme: 'base16-dark'
         });
+        
+        editor_req.setSize("100%","185px");
+
         var editor_res = CodeMirror.fromTextArea(document.getElementById("scripts_res"), {
             lineNumbers: true,
             lineWrapping: true,
@@ -283,6 +289,8 @@ block scripts_bottom
             matchBrackets: true,
             theme: 'base16-dark'
         });
+        
+        editor_res.setSize("100%","185px");
 
         var url = window.location.href;
 
@@ -363,26 +371,42 @@ block scripts_bottom
 
         $(".codebox-head-top").bind("dblclick", function(){
             if(codeboxTopExpanded){
-                $(".codebox-head-top").nextAll().first().css('height', '135px');
-                $(".codebox-head-bottom").nextAll().first().css('height', '135px');
+                $(".codebox-head-top").nextAll().first().css('height', '185px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '185px');
+        
+                editor_req.setSize("100%","185px");
+                editor_res.setSize("100%","185px");
+
                 codeboxTopExpanded = false;
                 codeboxBottomExpanded = false;
             }else{
-                $(".codebox-head-top").nextAll().first().css('height', '270px');
+                $(".codebox-head-top").nextAll().first().css('height', '370px');
                 $(".codebox-head-bottom").nextAll().first().css('height', '0px');
+        
+                editor_req.setSize("100%","370px");
+                editor_res.setSize("100%","370px");
+
                 codeboxTopExpanded = true;
                 codeboxBottomExpanded = false;
             }
         });
         $(".codebox-head-bottom").bind("dblclick", function(){
             if(codeboxBottomExpanded){
-                $(".codebox-head-top").nextAll().first().css('height', '135px');
-                $(".codebox-head-bottom").nextAll().first().css('height', '135px');
+                $(".codebox-head-top").nextAll().first().css('height', '185px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '185px');
+        
+                editor_req.setSize("100%","185px");
+                editor_res.setSize("100%","185px");
+
                 codeboxTopExpanded = false;
                 codeboxBottomExpanded = false;
             }else{
                 $(".codebox-head-top").nextAll().first().css('height', '0px');
-                $(".codebox-head-bottom").nextAll().first().css('height', '270px');
+                $(".codebox-head-bottom").nextAll().first().css('height', '370px');
+        
+                editor_req.setSize("100%","370px");
+                editor_res.setSize("100%","370px");
+
                 codeboxTopExpanded = false;
                 codeboxBottomExpanded = true;
             }
@@ -479,13 +503,14 @@ block scripts_bottom
 
         editor_req.on('change',function(cMirror){
             $("#scripts_req_alert").text('');
+            changes = true;
         });
 
         $("#scripts_new_btn").click(function(){
             $("#new-form-error").hide();
         });
 
-        $("#script_name, #script_project").click(function(){
+        $("#script_name, #script_project").change(function(){
             $("#new-form-error").hide();
         });
 
@@ -501,13 +526,24 @@ block scripts_bottom
             $("#script_name").prop('disabled', true);
             $("#scriptNewBtn").prop('disabled', true);
 
-            if($("#script_name").val() == "" || !checkAlphaNumeric($("#script_name").val()) || hasWhiteSpace($("#script_name").val())){
+            if($("#script_project").val() == "" || $("#script_project").val() == null){
+
+                $("#new-form-error").show();
+                $("#new-form-error b").text("Please choose a project.");
+
+                $("#script_project").prop('disabled', false);
+                $("#script_name").prop('disabled', false);
+                $("#scriptNewBtn").prop('disabled', false);
+
+            }else if($("#script_name").val() == "" || !checkAlphaNumeric($("#script_name").val()) || hasWhiteSpace($("#script_name").val())){
+                
                 $("#new-form-error").show();
                 $("#new-form-error b").text("Invalid script name.");
 
                 $("#script_project").prop('disabled', false);
                 $("#script_name").prop('disabled', false);
                 $("#scriptNewBtn").prop('disabled', false);
+
             }else{
                 $.post( "/service/scripts/add", { name: $("#script_name").val(), project: $("#script_project").val()}, "json")
                 .done(function( data ) {
