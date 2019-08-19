@@ -168,6 +168,8 @@ block scripts_bottom
 
         var instancePath = urlp[0]+'//'+urld+'.'+urli[1]+'.'+urli[2]+'/';
 
+        if(instancePath == "http://locNaN.undefined.undefined/") instancePath = "http://localhost:8000/";
+
         $(document).ready(function(){
             $('.modal').modal();
             $('select').formSelect();

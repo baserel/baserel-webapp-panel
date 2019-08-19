@@ -76,7 +76,11 @@ block content
                         textarea#console_req.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder="{}")
         .col.s6(style="background-color: #151515; padding: 0; border-left: 1px solid #212121")
                 .codebox-head.z-depth-1
-                    p Response
+                    .row.no-margins.no-paddings
+                        .col.s6
+                            p Response
+                        .col.s6(style="text-align: right; font-size: 12px; vertical-align: middle;")
+                            p#console_res_time
                 .codebox-body
                     .input-field.col.s12(style="margin-top: 0; margin-bottom: 0;")
                         textarea#console_res.materialize-textarea(onkeydown="return catchTab(this,event)", placeholder="{}")
@@ -240,9 +244,13 @@ block scripts_bottom
         $("#console_send_btn").click(function(){
 
             editor_res.setValue('');
+            $("#scripts_res_time").text('');
 
-            $.post( "/service/console/request", {request_address:get_api_address(), request_body:$('#console_req').val()}, function( data ) {
+            var start_ms = new Date().getTime();
+
+            $.post( "/service/console/request", {request_address:get_api_address(), request_body:editor_req.getValue()}, function( data ) {
                 editor_res.setValue(data);
+                $("#console_res_time").text((new Date().getTime()-start_ms)+" ms");
             });
         });
 
