@@ -14,6 +14,19 @@ function isEmpty(myObject) {
     return true;
 }
 
+router.post('/scripts/fullscreen/:fullscreen', function(req, res) {
+
+    if (req.params.fullscreen == null) {
+        res.send({ r: 1, t: req.app.locals.lang[req.session.lang][1] });
+    } else {
+
+        req.session.fullscreen = (req.params.fullscreen);
+        res.send({ r: 1, t: "SUC" });
+
+    }
+
+});
+
 router.post('/signin', function(req, res) {
 
     if (req.body.u == null || req.body.p == null || req.body.u == "" || req.body.p == "") {

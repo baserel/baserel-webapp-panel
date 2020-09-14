@@ -79,12 +79,26 @@ block style
         .scripts-script.scripts-script-active{
             background-color: #01579b !important;
         }
+        .panel-container.fullscreen .panel-sidenav{
+            display: none;
+        }
+        .panel-container.fullscreen .panel-navbar{
+            display: none;
+        }
+        .panel-container.fullscreen .panel-sub-title-container{
+            display: none;
+        }
+        .panel-container.fullscreen .panel-content{
+            padding-top: 0;
+            margin-left: 0;
+        }
+        
 
 block view-title
     h3.panel-title Scripts
 
 block content
-    .row(style="padding: 0 10px; margin-bottom: 30px;")
+    .panel-sub-title-container.row(style="padding: 0 10px; margin-bottom: 30px;")
         h3.panel-sub-title Create and manage powerful scripts. Read the docs 
             a(href="/docs/scripts") Here.
     .row.top-bar(style="background-color: #1b1b1b; margin-bottom: 0;")
@@ -111,6 +125,8 @@ block content
                 i.material-icons.right delete
             button#scripts_settings_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#settingsModal")
                 i.material-icons.right settings
+            button#scripts_fullscreen_btn.waves-effect.waves-light.btn-floating(style="line-height: 46px; background-color: #01579b; margin-right: 10px;")
+                i.material-icons.right fullscreen
             button#scripts_history_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#historyModal")
                 i.material-icons.right history
             button#scripts_lookup_btn.waves-effect.waves-light.btn-floating.modal-trigger(style="line-height: 46px; background-color: #01579b; margin-right: 10px;", href="#lookupModal")
@@ -304,6 +320,8 @@ block scripts_bottom
         var currentProject = "#{open_project_code}";
         var currentScript;
         
+        var fullscreen = "#{fullscreen}";
+
         var open_script_code = "#{open_script_code}";
         var open_project_code = "#{open_project_code}";
         var open_script_str = "";
@@ -333,6 +351,28 @@ block scripts_bottom
             }
 
         });
+
+        $("#scripts_fullscreen_btn").click(function(){
+
+            $.post( "/service/scripts/fullscreen/"+($(".panel-container").hasClass("fullscreen") ? "false" : "true"), function( data ) {
+
+                /*if(data.r == 1){
+                    window.location.replace(url);
+                }*/
+
+            });
+            
+            if($(".panel-container").hasClass("fullscreen")){
+                $(".panel-container").removeClass("fullscreen");
+            }else{
+                $(".panel-container").addClass("fullscreen");
+            }
+
+        })
+
+        if(fullscreen === 'true'){
+            $("#scripts_fullscreen_btn").click();
+        }
 
         var codeboxExpandedLevel = 1;
         var codeboxTopExpanded = false;

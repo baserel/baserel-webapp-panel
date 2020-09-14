@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "[[ ! $NODE_ENV ]] && NODE_ENV='production' && export NODE_ENV; node ./bin/www",
-    "start_dev": "[[ ! $NODE_ENV ]] && NODE_ENV='development' && export NODE_ENV; node ./bin/www"
+    "start": "node ./bin/www",
+    "start_dev": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

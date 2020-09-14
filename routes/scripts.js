@@ -79,11 +79,11 @@ router.get('/', function(req, res, next) {
                             }
 
                             if(rData2.result != null){
-                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint });
+                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint, fullscreen: req.session.fullscreen });
                             }else if(rData2.name != null){
-                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint, open_project_code:req.session.scripts_project, open_project_name:rData[req.session.scripts_project]["name"], open_script_code:req.session.scripts_script, open_script_name:rData2.name, open_script_str:rData2.script, open_script_request:rData2.request });
+                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint, open_project_code:req.session.scripts_project, open_project_name:rData[req.session.scripts_project]["name"], open_script_code:req.session.scripts_script, open_script_name:rData2.name, open_script_str:rData2.script, open_script_request:rData2.request, fullscreen: req.session.fullscreen });
                             }else{
-                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint });
+                                res.render('scripts', { lang: req.app.locals.lang[req.session.lang], e:e, t:t, projects:projects, query: req.query, fingerprint: req.session.fingerprint, fullscreen: req.session.fullscreen });
                             }
                         });
                     }
